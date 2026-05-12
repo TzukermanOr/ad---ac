@@ -1,0 +1,2896 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שיעור AD DC Advanced Configuration | מדריך 5 שעות</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1a2235;
+  --bg-card: #131a2c;
+  --bg-code: #0d1117;
+  --accent-cyan: #00d4ff;
+  --accent-green: #10ff80;
+  --accent-purple: #b16cff;
+  --accent-orange: #ff8c42;
+  --accent-red: #ff5572;
+  --accent-yellow: #ffd166;
+  --text-primary: #e4e9f2;
+  --text-secondary: #9aa5b8;
+  --text-muted: #6b7388;
+  --border: rgba(255,255,255,0.08);
+  --border-bright: rgba(0, 212, 255, 0.3);
+  --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.15);
+  --gradient-1: linear-gradient(135deg, #00d4ff 0%, #b16cff 100%);
+  --gradient-2: linear-gradient(135deg, #10ff80 0%, #00d4ff 100%);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Heebo', 'Space Grotesk', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(circle at 20% 0%, rgba(177, 108, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 100%, rgba(16, 255, 128, 0.05) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+::selection { background: var(--accent-cyan); color: var(--bg-primary); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-purple); }
+
+/* ========== HEADER ========== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent 49%, rgba(0,212,255,0.03) 50%, transparent 51%) 0 0 / 50px 50px,
+    linear-gradient(0deg, transparent 49%, rgba(0,212,255,0.03) 50%, transparent 51%) 0 0 / 50px 50px;
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 0.5rem 1.2rem;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid var(--border-bright);
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--accent-cyan);
+  margin-bottom: 2rem;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+  50% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  background: var(--gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--text-secondary);
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.3rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.meta-item .icon { color: var(--accent-cyan); font-size: 1.2rem; }
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem 2rem;
+  background: var(--gradient-1);
+  color: var(--bg-primary);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  transition: transform 0.3s;
+}
+
+.hero-cta:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,212,255,0.3); }
+
+/* ========== TABLE OF CONTENTS ========== */
+.toc-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.toc-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.8rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.toc-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 60px; height: 60px;
+  background: var(--gradient-1);
+  opacity: 0.1;
+  border-radius: 0 12px 0 60px;
+  transition: all 0.3s;
+}
+
+.toc-card:hover {
+  border-color: var(--accent-cyan);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-glow);
+}
+
+.toc-card:hover::before { width: 100%; height: 100%; opacity: 0.05; }
+
+.toc-card-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--accent-cyan);
+  margin-bottom: 0.5rem;
+}
+
+.toc-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.toc-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.toc-card-duration {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.3rem 0.8rem;
+  background: rgba(0,212,255,0.1);
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--accent-cyan);
+}
+
+/* ========== SECTIONS ========== */
+.lesson-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  scroll-margin-top: 2rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 3rem;
+  font-weight: 700;
+  background: var(--gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.section-header-content { flex: 1; }
+
+.section-header h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.section-header .subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.section-duration {
+  padding: 0.5rem 1rem;
+  background: rgba(16, 255, 128, 0.1);
+  border: 1px solid rgba(16, 255, 128, 0.3);
+  border-radius: 8px;
+  color: var(--accent-green);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+}
+
+/* ========== CONTENT BLOCKS ========== */
+.content-block {
+  margin-bottom: 3rem;
+}
+
+.content-block h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: var(--accent-cyan);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.content-block h3::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 28px;
+  background: var(--gradient-1);
+  border-radius: 2px;
+}
+
+.content-block h4 {
+  font-size: 1.25rem;
+  margin: 1.5rem 0 0.8rem;
+  color: var(--accent-yellow);
+}
+
+.content-block p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+}
+
+.content-block ul, .content-block ol {
+  padding-right: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.content-block li {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.content-block li strong { color: var(--text-primary); }
+
+/* ========== CALLOUT BOXES ========== */
+.callout {
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin: 1.5rem 0;
+  border-right: 4px solid;
+  position: relative;
+}
+
+.callout-icon {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  font-size: 1.5rem;
+}
+
+.callout-title {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.callout.info {
+  background: rgba(0, 212, 255, 0.08);
+  border-color: var(--accent-cyan);
+}
+.callout.info .callout-title { color: var(--accent-cyan); }
+
+.callout.warning {
+  background: rgba(255, 209, 102, 0.08);
+  border-color: var(--accent-yellow);
+}
+.callout.warning .callout-title { color: var(--accent-yellow); }
+
+.callout.danger {
+  background: rgba(255, 85, 114, 0.08);
+  border-color: var(--accent-red);
+}
+.callout.danger .callout-title { color: var(--accent-red); }
+
+.callout.success {
+  background: rgba(16, 255, 128, 0.08);
+  border-color: var(--accent-green);
+}
+.callout.success .callout-title { color: var(--accent-green); }
+
+.callout.tip {
+  background: rgba(177, 108, 255, 0.08);
+  border-color: var(--accent-purple);
+}
+.callout.tip .callout-title { color: var(--accent-purple); }
+
+/* ========== CODE BLOCKS ========== */
+.code-block {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 1.5rem 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.code-dots { display: flex; gap: 0.4rem; }
+.code-dots span {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+}
+.code-dots span:nth-child(1) { background: #ff5f56; }
+.code-dots span:nth-child(2) { background: #ffbd2e; }
+.code-dots span:nth-child(3) { background: #27c93f; }
+
+.code-block pre {
+  padding: 1.5rem;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  direction: ltr;
+  text-align: left;
+}
+
+.code-block code {
+  color: var(--text-primary);
+}
+
+/* PowerShell syntax highlighting */
+.token-cmdlet { color: var(--accent-cyan); }
+.token-param { color: var(--accent-yellow); }
+.token-string { color: var(--accent-green); }
+.token-comment { color: var(--text-muted); font-style: italic; }
+.token-keyword { color: var(--accent-purple); }
+.token-operator { color: var(--accent-orange); }
+.token-prompt { color: var(--accent-green); }
+
+/* ========== STEPS ========== */
+.steps {
+  counter-reset: step;
+  margin: 2rem 0;
+}
+
+.step {
+  position: relative;
+  padding: 1.5rem 1.5rem 1.5rem 4rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  counter-increment: step;
+  transition: all 0.3s;
+}
+
+.step:hover {
+  border-color: var(--accent-cyan);
+  transform: translateX(-5px);
+}
+
+.step::before {
+  content: counter(step);
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  width: 36px;
+  height: 36px;
+  background: var(--gradient-1);
+  color: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.step h4 {
+  color: var(--accent-cyan);
+  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+}
+
+.step p { color: var(--text-secondary); font-size: 1rem; }
+
+.step .keyboard {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--accent-yellow);
+  margin: 0 0.2rem;
+}
+
+/* ========== GRID LAYOUTS ========== */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: all 0.3s;
+}
+
+.feature-card:hover {
+  border-color: var(--accent-cyan);
+  transform: translateY(-3px);
+}
+
+.feature-card .icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.feature-card h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* ========== TABLES ========== */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 2rem 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+}
+
+th {
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  text-align: right;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  font-size: 0.95rem;
+  border-bottom: 2px solid var(--accent-cyan);
+}
+
+td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+tr:hover td { background: rgba(0,212,255,0.03); }
+tr:last-child td { border-bottom: none; }
+
+.code-inline {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg-code);
+  color: var(--accent-green);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+  direction: ltr;
+  display: inline-block;
+}
+
+/* ========== DIAGRAMS ========== */
+.diagram-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.diagram-caption {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ========== HIERARCHY TREE ========== */
+.tree {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  direction: ltr;
+  text-align: left;
+  line-height: 2;
+  font-size: 0.95rem;
+}
+
+.tree .root { color: var(--accent-cyan); font-weight: 700; }
+.tree .ou { color: var(--accent-yellow); }
+.tree .container { color: var(--accent-purple); }
+.tree .user { color: var(--accent-green); }
+.tree .indent { color: var(--text-muted); }
+
+/* ========== EXERCISE BOX ========== */
+.exercise {
+  background: linear-gradient(135deg, rgba(177,108,255,0.05), rgba(0,212,255,0.05));
+  border: 1px solid var(--accent-purple);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.exercise::before {
+  content: 'תרגיל מעשי';
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: var(--bg-primary);
+  padding: 0 1rem;
+  color: var(--accent-purple);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.exercise h4 {
+  color: var(--accent-purple);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+  text-align: center;
+  padding: 4rem 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.footer h3 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+/* ========== NAV ========== */
+.floating-nav {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(19, 26, 44, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.5rem;
+  display: flex;
+  gap: 0.3rem;
+  z-index: 1000;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.floating-nav a {
+  padding: 0.6rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s;
+}
+
+.floating-nav a:hover {
+  background: rgba(0,212,255,0.1);
+  color: var(--accent-cyan);
+}
+
+/* ========== UI MOCKUP ========== */
+.ui-mockup {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  direction: ltr;
+}
+
+.ui-mockup-titlebar {
+  background: var(--bg-tertiary);
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.ui-mockup-content {
+  padding: 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  margin: 0.2rem 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: var(--text-secondary);
+}
+
+.menu-item:hover { background: rgba(0,212,255,0.1); color: var(--accent-cyan); }
+
+.menu-item.highlight {
+  background: rgba(0,212,255,0.15);
+  color: var(--accent-cyan);
+  border-right: 3px solid var(--accent-cyan);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.content-block, .feature-card, .step, .toc-card {
+  animation: fadeInUp 0.5s ease-out backwards;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .section-header { flex-direction: column; align-items: flex-start; }
+  .section-number { font-size: 2rem; }
+  .floating-nav { bottom: 1rem; padding: 0.3rem; }
+  .floating-nav a { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
+  .hero h1 { font-size: 2.5rem; }
+}
+
+/* Print styles */
+@media print {
+  body { background: white; color: black; }
+  .floating-nav, .hero-cta { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="hero-badge">⚡ HACKERU TRAINING MATERIAL</div>
+  <h1>AD DC Advanced Configuration</h1>
+  <p class="hero-subtitle">
+    מדריך מקיף ומעמיק לניהול Active Directory ו-Domain Controller<br>
+    שיעור מובנה של 5 שעות, עם הסברים, שלבים, דוגמאות וקוד
+  </p>
+  <div class="hero-meta">
+    <div class="meta-item"><span class="icon">⏱</span> 5 שעות לימוד</div>
+    <div class="meta-item"><span class="icon">📚</span> 5 מודולים</div>
+    <div class="meta-item"><span class="icon">💻</span> Windows Server 2016/2019/2022</div>
+    <div class="meta-item"><span class="icon">🎯</span> רמה: מתחילים-בינוני</div>
+  </div>
+  <a href="#toc" class="hero-cta">התחל ללמוד ↓</a>
+</section>
+
+<!-- ========== TABLE OF CONTENTS ========== -->
+<section id="toc" class="toc-section">
+  <h2 style="text-align:center; font-size:2.5rem; margin-bottom:1rem;">תוכן השיעור</h2>
+  <p style="text-align:center; color: var(--text-secondary); max-width:700px; margin:0 auto;">
+    השיעור בנוי באופן מודולרי. כל מודול עוסק בנושא ספציפי ובונה על הקודם. הזמן הכולל - 5 שעות.
+  </p>
+
+  <div class="toc-grid">
+    <a href="#hour1" class="toc-card">
+      <div class="toc-card-number">HOUR 01</div>
+      <h3>🏰 מבוא ל-Domain Controller</h3>
+      <p>מה זה DC, מה זה Active Directory, AD DS, ולמה כל ארגון משתמש בזה.</p>
+      <span class="toc-card-duration">⏱ 60 דקות</span>
+    </a>
+
+    <a href="#hour2" class="toc-card">
+      <div class="toc-card-number">HOUR 02</div>
+      <h3>🗂 ארכיטקטורה ו-Entities</h3>
+      <p>NTDS.DIT, Global Catalog, מבנה לוגי, OUs, Users, Groups, Computers.</p>
+      <span class="toc-card-duration">⏱ 60 דקות</span>
+    </a>
+
+    <a href="#hour3" class="toc-card">
+      <div class="toc-card-number">HOUR 03</div>
+      <h3>⚙ ניהול AD - GUI ו-PowerShell</h3>
+      <p>ADUC, AD Administrative Center, יצירת משתמשים, קבוצות, OUs - בשתי השיטות.</p>
+      <span class="toc-card-duration">⏱ 60 דקות</span>
+    </a>
+
+    <a href="#hour4" class="toc-card">
+      <div class="toc-card-number">HOUR 04</div>
+      <h3>🖥 RSAT, Server Manager, MMC</h3>
+      <p>ניהול שרתים מרחוק, הוספת שרתים ל-pool, PowerShell Remoting.</p>
+      <span class="toc-card-duration">⏱ 60 דקות</span>
+    </a>
+
+    <a href="#hour5" class="toc-card">
+      <div class="toc-card-number">HOUR 05</div>
+      <h3>🔐 תהליך Login ותרגול</h3>
+      <p>מה קורה כשמשתמש מתחבר לדומיין, איך עובדת האימות, ותרגול סופי.</p>
+      <span class="toc-card-duration">⏱ 60 דקות</span>
+    </a>
+
+    <a href="#cheatsheet" class="toc-card" style="background: linear-gradient(135deg, rgba(177,108,255,0.1), rgba(0,212,255,0.1));">
+      <div class="toc-card-number">BONUS</div>
+      <h3>📋 Cheat Sheet</h3>
+      <p>כל הפקודות והקיצורים במקום אחד. להדפסה.</p>
+      <span class="toc-card-duration">⏱ Reference</span>
+    </a>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- HOUR 1: INTRODUCTION                                           -->
+<!-- ============================================================ -->
+<section id="hour1" class="lesson-section">
+  <div class="section-header">
+    <div class="section-number">01</div>
+    <div class="section-header-content">
+      <h2>מבוא ל-Domain Controller ו-Active Directory</h2>
+      <p class="subtitle">השעה הראשונה - יסודות. נבנה את התשתית התיאורטית שעליה הכל יושב.</p>
+    </div>
+    <div class="section-duration">60 דק'</div>
+  </div>
+
+  <!-- 1.1 What is a Domain -->
+  <div class="content-block">
+    <h3>1.1 - מה זה דומיין (Domain) בכלל?</h3>
+    <p>
+      לפני שנדבר על Domain Controller, חייבים להבין מה זה <strong>Domain</strong> (דומיין).
+    </p>
+    <p>
+      דומיין הוא <strong>קבוצה של מחשבים ומשתמשים</strong> שמנוהלים יחד תחת אותם כללי אבטחה ומדיניות.
+      תחשבו על זה כמו על "ארגון אחד גדול" - בית ספר, חברה, בית חולים - שבו יש מנהל מערכת אחד שקובע מי
+      יכול להיכנס, מאיפה, ולאן.
+    </p>
+
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-title">דוגמה מהחיים</div>
+      <p style="margin:0;">
+        בחברה עם 500 עובדים, אם <strong>אין דומיין</strong> - תצטרך לפתוח חשבון משתמש בכל מחשב בנפרד (500 × מספר המחשבים).
+        עם דומיין - יוצרים את המשתמש <strong>פעם אחת</strong> ב-DC, והוא יכול להתחבר מכל מחשב בארגון.
+      </p>
+    </div>
+  </div>
+
+  <!-- 1.2 What is a DC -->
+  <div class="content-block">
+    <h3>1.2 - מה זה Domain Controller (DC)?</h3>
+
+    <p>
+      <strong>Domain Controller (בקיצור DC)</strong> הוא ה"מוח" של הדומיין. זה שרת ווינדוס מיוחד
+      שמותקן עליו תפקיד (Role) בשם <strong>Active Directory Domain Services (AD DS)</strong>.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="icon">🔐</span>
+        <h4>אימות (Authentication)</h4>
+        <p>בודק את שם המשתמש והסיסמה של כל מי שמנסה להיכנס לדומיין.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🎫</span>
+        <h4>הרשאות (Authorization)</h4>
+        <p>קובע למה כל משתמש מותר לגשת ולמה לא.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">📋</span>
+        <h4>מדיניות (Policies)</h4>
+        <p>מחיל GPO - מדיניות קבוצתית על המשתמשים והמחשבים.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🗄</span>
+        <h4>מאגר מידע</h4>
+        <p>שומר את כל המידע על משתמשים, קבוצות, מחשבים ו-OUs במאגר הנקרא NTDS.DIT.</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-title">חשוב לדעת</div>
+      <p style="margin:0;">
+        DC הוא לא סתם "שרת". זה <strong>תפקיד</strong> (Role) שמותקן על שרת ווינדוס. כל מחשב Windows Server
+        יכול להפוך ל-DC, אבל זה תהליך שצריך לבצע במפורש (Promote).
+      </p>
+    </div>
+  </div>
+
+  <!-- 1.3 What is AD -->
+  <div class="content-block">
+    <h3>1.3 - מה זה Active Directory (AD)?</h3>
+
+    <p>
+      <strong>Active Directory</strong> זה השם של מערכת הקטלוג של מיקרוסופט - המקום שבו שמורים כל
+      ה"אובייקטים" (objects) של הדומיין: משתמשים, מחשבים, קבוצות, מדפסות, וכו'.
+    </p>
+
+    <p>תחשבו על AD בתור <strong>"ספריית טלפונים חכמה"</strong> של הארגון, רק שבמקום מספרי טלפון יש בה:</p>
+
+    <ul>
+      <li>👤 רשימת כל המשתמשים והפרטים שלהם (שם, מחלקה, אימייל, סיסמה מוצפנת)</li>
+      <li>💻 רשימת כל המחשבים בארגון</li>
+      <li>👥 קבוצות (לדוגמה: "אנשי IT", "מחלקת שיווק")</li>
+      <li>🖨 מדפסות, שרתים, ושירותים אחרים</li>
+      <li>📁 OUs (יחידות ארגוניות - נדבר עליהן בהמשך)</li>
+    </ul>
+
+    <div class="callout tip">
+      <span class="callout-icon">🎓</span>
+      <div class="callout-title">הקשר בין DC ל-AD</div>
+      <p style="margin:0;">
+        <strong>AD DS</strong> = השירות.<br>
+        <strong>DC</strong> = השרת שמריץ את השירות.<br>
+        <strong>AD</strong> = הקטלוג עצמו (המידע ש-DC שומר ומנהל).
+      </p>
+    </div>
+  </div>
+
+  <!-- 1.4 AD DS Tools Overview -->
+  <div class="content-block">
+    <h3>1.4 - הכלים של AD DS - סקירה ראשונית</h3>
+
+    <p>
+      ברגע שמתקינים את התפקיד AD DS על שרת והופכים אותו ל-DC, מותקנים אוטומטית מספר כלי ניהול.
+      אלה הכלים שתעבוד איתם 95% מהזמן:
+    </p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>הכלי</th>
+            <th>השם המלא</th>
+            <th>בשביל מה משתמשים</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ADUC</strong></td>
+            <td>Active Directory Users and Computers</td>
+            <td>הכלי הקלאסי. ניהול משתמשים, קבוצות, מחשבים ו-OUs.</td>
+          </tr>
+          <tr>
+            <td><strong>ADAC</strong></td>
+            <td>Active Directory Administrative Center</td>
+            <td>גרסה מתקדמת של ADUC עם תמיכה ב-PowerShell.</td>
+          </tr>
+          <tr>
+            <td><strong>AD Domains and Trusts</strong></td>
+            <td>Active Directory Domains and Trusts</td>
+            <td>ניהול אמון (Trust) בין דומיינים ו-Forests שונים.</td>
+          </tr>
+          <tr>
+            <td><strong>AD Sites and Services</strong></td>
+            <td>Active Directory Sites and Services</td>
+            <td>ניהול אתרים פיזיים וקישוריות בין מיקומים.</td>
+          </tr>
+          <tr>
+            <td><strong>AD Module for PowerShell</strong></td>
+            <td>Active Directory Module for Windows PowerShell</td>
+            <td>הפעלת פקודות AD מ-PowerShell - אוטומציה.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 1.5 How to find them -->
+  <div class="content-block">
+    <h3>1.5 - איך לפתוח את הכלים? (שלב-שלב)</h3>
+
+    <p>אחרי שהתקנו את AD DS, יש כמה דרכים להגיע לכלים. נכיר את שתי הדרכים העיקריות:</p>
+
+    <h4>דרך 1: דרך Server Manager</h4>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח את Server Manager</h4>
+        <p>לחץ על כפתור <span class="keyboard">⊞ Start</span>. אם זה Windows Server, Server Manager אמור להיפתח אוטומטית בכניסה. אם לא - חפש "Server Manager" בתפריט התחלה.</p>
+      </div>
+      <div class="step">
+        <h4>לחץ על <span class="keyboard">Tools</span> בפינה הימנית העליונה</h4>
+        <p>זה יפתח רשימה ארוכה של כל הכלים הזמינים בשרת.</p>
+      </div>
+      <div class="step">
+        <h4>בחר את הכלי הרצוי</h4>
+        <p>לדוגמה: <span class="code-inline">Active Directory Users and Computers</span> או <span class="code-inline">Active Directory Administrative Center</span>.</p>
+      </div>
+    </div>
+
+    <h4>דרך 2: דרך פקודות Run (מהיר יותר!)</h4>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח את חלון Run</h4>
+        <p>לחץ על <span class="keyboard">Win + R</span></p>
+      </div>
+      <div class="step">
+        <h4>הקלד את שם הכלי</h4>
+        <p>לדוגמה: <span class="code-inline">dsa.msc</span> פותח את ADUC, <span class="code-inline">dssite.msc</span> פותח את Sites and Services.</p>
+      </div>
+      <div class="step">
+        <h4>לחץ <span class="keyboard">Enter</span></h4>
+        <p>הכלי ייפתח מיד.</p>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <span class="callout-icon">⚡</span>
+      <div class="callout-title">קיצורי דרך - שווה לזכור בעל פה</div>
+      <ul style="margin:0; padding-right:1.5rem;">
+        <li><span class="code-inline">dsa.msc</span> - ADUC (Users & Computers)</li>
+        <li><span class="code-inline">dssite.msc</span> - Sites and Services</li>
+        <li><span class="code-inline">domain.msc</span> - Domains and Trusts</li>
+        <li><span class="code-inline">gpmc.msc</span> - Group Policy Management</li>
+        <li><span class="code-inline">dsac.exe</span> - Administrative Center</li>
+        <li><span class="code-inline">mmc</span> - Microsoft Management Console (ריק)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 1.6 Hierarchy: Forest, Tree, Domain -->
+  <div class="content-block">
+    <h3>1.6 - היררכיה: Forest, Tree, Domain</h3>
+
+    <p>
+      לפני שנמשיך, חייבים להבין את ההיררכיה של AD. יש שלושה מושגים שמבלבלים את כולם בהתחלה:
+    </p>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Forest box -->
+        <rect x="20" y="20" width="660" height="360" rx="10"
+              fill="none" stroke="#b16cff" stroke-width="2" stroke-dasharray="5,5"/>
+        <text x="40" y="50" fill="#b16cff" font-family="JetBrains Mono" font-size="14" font-weight="700">FOREST: hackeru.com</text>
+
+        <!-- Tree 1 -->
+        <rect x="50" y="80" width="290" height="270" rx="8"
+              fill="none" stroke="#00d4ff" stroke-width="2"/>
+        <text x="70" y="105" fill="#00d4ff" font-family="JetBrains Mono" font-size="12" font-weight="700">TREE 1</text>
+
+        <!-- Root domain -->
+        <rect x="100" y="120" width="190" height="50" rx="6" fill="#1a2235" stroke="#00d4ff" stroke-width="1.5"/>
+        <text x="195" y="150" text-anchor="middle" fill="#e4e9f2" font-family="Heebo" font-size="13" font-weight="700">hackeru.com</text>
+
+        <!-- Sub domains -->
+        <line x1="195" y1="170" x2="135" y2="200" stroke="#6b7388" stroke-width="1.5"/>
+        <line x1="195" y1="170" x2="255" y2="200" stroke="#6b7388" stroke-width="1.5"/>
+
+        <rect x="70" y="200" width="130" height="40" rx="6" fill="#131a2c" stroke="#10ff80" stroke-width="1.5"/>
+        <text x="135" y="225" text-anchor="middle" fill="#e4e9f2" font-family="Heebo" font-size="11">il.hackeru.com</text>
+
+        <rect x="220" y="200" width="130" height="40" rx="6" fill="#131a2c" stroke="#10ff80" stroke-width="1.5"/>
+        <text x="285" y="225" text-anchor="middle" fill="#e4e9f2" font-family="Heebo" font-size="11">us.hackeru.com</text>
+
+        <!-- OUs -->
+        <line x1="135" y1="240" x2="100" y2="275" stroke="#6b7388" stroke-width="1"/>
+        <line x1="135" y1="240" x2="170" y2="275" stroke="#6b7388" stroke-width="1"/>
+
+        <rect x="60" y="275" width="80" height="30" rx="4" fill="#0d1117" stroke="#ffd166" stroke-width="1"/>
+        <text x="100" y="294" text-anchor="middle" fill="#ffd166" font-family="JetBrains Mono" font-size="9">OU: Sales</text>
+
+        <rect x="150" y="275" width="80" height="30" rx="4" fill="#0d1117" stroke="#ffd166" stroke-width="1"/>
+        <text x="190" y="294" text-anchor="middle" fill="#ffd166" font-family="JetBrains Mono" font-size="9">OU: IT</text>
+
+        <!-- Tree 2 (different namespace, same forest via trust) -->
+        <rect x="370" y="80" width="290" height="270" rx="8"
+              fill="none" stroke="#ff8c42" stroke-width="2"/>
+        <text x="390" y="105" fill="#ff8c42" font-family="JetBrains Mono" font-size="12" font-weight="700">TREE 2</text>
+
+        <rect x="420" y="120" width="190" height="50" rx="6" fill="#1a2235" stroke="#ff8c42" stroke-width="1.5"/>
+        <text x="515" y="150" text-anchor="middle" fill="#e4e9f2" font-family="Heebo" font-size="13" font-weight="700">cyberu.com</text>
+
+        <line x1="515" y1="170" x2="455" y2="200" stroke="#6b7388" stroke-width="1.5"/>
+        <line x1="515" y1="170" x2="575" y2="200" stroke="#6b7388" stroke-width="1.5"/>
+
+        <rect x="390" y="200" width="130" height="40" rx="6" fill="#131a2c" stroke="#10ff80" stroke-width="1.5"/>
+        <text x="455" y="225" text-anchor="middle" fill="#e4e9f2" font-family="Heebo" font-size="11">dev.cyberu.com</text>
+
+        <rect x="540" y="200" width="130" height="40" rx="6" fill="#131a2c" stroke="#10ff80" stroke-width="1.5"/>
+        <text x="605" y="225" text-anchor="middle" fill="#e4e9f2" font-family="Heebo" font-size="11">qa.cyberu.com</text>
+      </svg>
+      <p class="diagram-caption">היררכיה של AD: Forest מכיל Trees, Trees מכילים Domains, Domains מכילים OUs.</p>
+    </div>
+
+    <ul>
+      <li><strong>Domain</strong> (דומיין) - היחידה הבסיסית. לדוגמה: <span class="code-inline">hackeru.com</span></li>
+      <li><strong>Tree</strong> (עץ) - אוסף של דומיינים שחולקים אותו namespace (אותו שם בסיס). לדוגמה: <span class="code-inline">hackeru.com</span>, <span class="code-inline">il.hackeru.com</span>, <span class="code-inline">us.hackeru.com</span> כולם באותו Tree.</li>
+      <li><strong>Forest</strong> (יער) - היחידה הגדולה ביותר. אוסף של עצים שיכולים להיות עם namespaces שונים (לדוגמה <span class="code-inline">hackeru.com</span> + <span class="code-inline">cyberu.com</span>) אבל חולקים schema אחד וקטלוג גלובלי אחד.</li>
+    </ul>
+  </div>
+
+  <div class="exercise">
+    <h4>✓ בדיקת הבנה - שעה 1</h4>
+    <p>לפני שתעבור לשעה הבאה, ודא שאתה יכול לענות על השאלות הבאות:</p>
+    <ol>
+      <li>מה ההבדל בין Domain, Tree ו-Forest?</li>
+      <li>מה זה DC ומה התפקיד שלו?</li>
+      <li>איך נפתח את ADUC בשתי דרכים שונות?</li>
+      <li>מה זה AD DS ומה הקשר שלו ל-DC?</li>
+      <li>תן 3 דוגמאות לאובייקטים שנשמרים ב-AD.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- HOUR 2: ARCHITECTURE & ENTITIES                                -->
+<!-- ============================================================ -->
+<section id="hour2" class="lesson-section">
+  <div class="section-header">
+    <div class="section-number">02</div>
+    <div class="section-header-content">
+      <h2>ארכיטקטורה ו-Entities של Active Directory</h2>
+      <p class="subtitle">השעה השנייה - איך AD בנוי מבפנים: NTDS.DIT, Global Catalog, ואת כל סוגי האובייקטים.</p>
+    </div>
+    <div class="section-duration">60 דק'</div>
+  </div>
+
+  <!-- 2.1 NTDS.DIT -->
+  <div class="content-block">
+    <h3>2.1 - NTDS.DIT - מאגר הנתונים של AD</h3>
+
+    <p>
+      כל המידע של Active Directory - כל המשתמשים, הסיסמאות, הקבוצות, הכל - שמור בקובץ <strong>אחד</strong>
+      בשם <span class="code-inline">NTDS.DIT</span>. זה למעשה <strong>בסיס הנתונים של AD</strong>.
+    </p>
+
+    <p>הקובץ נמצא במיקום הזה (קבוע ב-Windows Server):</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>File Location</span>
+      </div>
+<pre><code>C:\Windows\NTDS\ntds.dit
+
+# או באמצעות משתנה סביבה:
+%systemroot%\ntds\ntds.dit</code></pre>
+    </div>
+
+    <p>בתיקייה הזו יש כמה קבצים, וכל אחד מהם משחק תפקיד:</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>הקובץ</th>
+            <th>התפקיד</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="code-inline">ntds.dit</span></td>
+            <td>הקובץ הראשי - מכיל את כל האובייקטים והנתונים</td>
+          </tr>
+          <tr>
+            <td><span class="code-inline">edb.log</span></td>
+            <td>קובץ ה-Transaction Log - שינויים שעוד לא נכתבו לקובץ הראשי</td>
+          </tr>
+          <tr>
+            <td><span class="code-inline">edb.chk</span></td>
+            <td>Checkpoint - מסמן עד איפה כתבנו כבר ל-DIT</td>
+          </tr>
+          <tr>
+            <td><span class="code-inline">temp.edb</span></td>
+            <td>קובץ זמני המשמש במהלך transactions</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout danger">
+      <span class="callout-icon">🚨</span>
+      <div class="callout-title">קריטי מבחינת אבטחה!</div>
+      <p style="margin:0;">
+        <strong>NTDS.DIT מכיל hashes של כל הסיסמאות בדומיין.</strong> תוקפים שמצליחים להגיע לקובץ הזה
+        (לדוגמה דרך VSS shadow copy או DCSync) - יכולים לחלץ את ה-hashes ולעשות Pass-the-Hash על כל
+        חשבון בדומיין, כולל Domain Admin. זה בדיוק מה שעושים כלים כמו <strong>secretsdump.py</strong> מה-Impacket.
+      </p>
+    </div>
+
+    <h4>איך לראות את הקובץ?</h4>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח את File Explorer</h4>
+        <p>קיצור: <span class="keyboard">Win + E</span></p>
+      </div>
+      <div class="step">
+        <h4>נווט ל-C:\Windows\NTDS</h4>
+        <p>הקלד את הנתיב בשורת הכתובת, או נווט ידנית.</p>
+      </div>
+      <div class="step">
+        <h4>הפעל הצגת קבצים מוסתרים</h4>
+        <p>בלשונית <span class="keyboard">View</span>, סמן <span class="code-inline">Hidden items</span>.</p>
+      </div>
+      <div class="step">
+        <h4>תראה את כל הקבצים</h4>
+        <p>אבל לא תוכל לקרוא או להעתיק את <span class="code-inline">ntds.dit</span> כי זה נעול ע"י השירות.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2 Global Catalog -->
+  <div class="content-block">
+    <h3>2.2 - Global Catalog (GC) - הקטלוג הגלובלי</h3>
+
+    <p>
+      בארגון עם <strong>דומיין יחיד</strong> זה לא קריטי. אבל כשיש כמה דומיינים ב-Forest (לדוגמה
+      <span class="code-inline">il.hackeru.com</span> ו-<span class="code-inline">us.hackeru.com</span>),
+      איך מחפשים משתמש בלי לדעת באיזה דומיין הוא יושב?
+    </p>
+
+    <p>
+      התשובה: <strong>Global Catalog</strong>. זה אינדקס מצומצם של <strong>כל האובייקטים בכל הדומיינים</strong>
+      ב-Forest, ששמור על DCs מסוימים שנקראים <strong>Global Catalog Servers</strong>.
+    </p>
+
+    <div class="callout info">
+      <span class="callout-icon">📚</span>
+      <div class="callout-title">חשוב להבין</div>
+      <p style="margin:0;">
+        ה-GC לא מכיל את <strong>כל</strong> התכונות של כל אובייקט - רק את הפופולריות (שם, אימייל, חברות בקבוצות, וכו').
+        זה <strong>"partial representation"</strong> - ייצוג חלקי. למידע מלא צריך לפנות לדומיין של האובייקט.
+      </p>
+    </div>
+
+    <h4>למה משתמשים ב-GC?</h4>
+    <ul>
+      <li>🔍 חיפוש מהיר של אובייקטים בכל ה-Forest</li>
+      <li>🔐 אימות login בדומיינים אחרים</li>
+      <li>📧 פתיחת Outlook ועדכון Global Address List</li>
+      <li>👥 בדיקת חברות ב-Universal Groups</li>
+    </ul>
+
+    <h4>איך בודקים אם DC הוא Global Catalog?</h4>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>PowerShell</span>
+      </div>
+<pre><code><span class="token-comment"># הצג את כל ה-GCs בפורסט</span>
+<span class="token-cmdlet">Get-ADForest</span> <span class="token-operator">|</span> <span class="token-cmdlet">Select-Object</span> <span class="token-operator">-ExpandProperty</span> GlobalCatalogs
+
+<span class="token-comment"># בדוק DC ספציפי</span>
+<span class="token-cmdlet">Get-ADDomainController</span> <span class="token-param">-Identity</span> <span class="token-string">"DC01"</span> <span class="token-operator">|</span> <span class="token-cmdlet">Select-Object</span> Name, IsGlobalCatalog</code></pre>
+    </div>
+  </div>
+
+  <!-- 2.3 Logical Architecture -->
+  <div class="content-block">
+    <h3>2.3 - הארכיטקטורה הלוגית של AD</h3>
+
+    <p>
+      "ארכיטקטורה לוגית" זה איך AD מאורגן <strong>מבחינה רעיונית</strong> - לא איפה השרתים נמצאים פיזית.
+      הארכיטקטורה הזו <strong>גמישה</strong> ויש להחליט עליה לפני שמקימים את הדומיין.
+    </p>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg">
+        <!-- Domain box -->
+        <rect x="50" y="20" width="600" height="310" rx="10" fill="#131a2c" stroke="#00d4ff" stroke-width="2"/>
+        <text x="350" y="50" text-anchor="middle" fill="#00d4ff" font-family="Heebo" font-size="18" font-weight="700">Domain: hackeru.com</text>
+
+        <!-- OU 1: IT -->
+        <rect x="80" y="80" width="180" height="220" rx="8" fill="#1a2235" stroke="#ffd166" stroke-width="2"/>
+        <text x="170" y="105" text-anchor="middle" fill="#ffd166" font-family="Heebo" font-size="14" font-weight="700">OU: IT</text>
+
+        <!-- Users -->
+        <rect x="100" y="125" width="60" height="30" rx="4" fill="#0d1117" stroke="#10ff80" stroke-width="1"/>
+        <text x="130" y="144" text-anchor="middle" fill="#10ff80" font-family="JetBrains Mono" font-size="10">👤 User</text>
+
+        <rect x="180" y="125" width="60" height="30" rx="4" fill="#0d1117" stroke="#10ff80" stroke-width="1"/>
+        <text x="210" y="144" text-anchor="middle" fill="#10ff80" font-family="JetBrains Mono" font-size="10">👤 User</text>
+
+        <!-- Groups -->
+        <rect x="100" y="170" width="140" height="30" rx="4" fill="#0d1117" stroke="#b16cff" stroke-width="1"/>
+        <text x="170" y="189" text-anchor="middle" fill="#b16cff" font-family="JetBrains Mono" font-size="10">👥 Group: IT-Admins</text>
+
+        <!-- Computers -->
+        <rect x="100" y="215" width="60" height="30" rx="4" fill="#0d1117" stroke="#ff8c42" stroke-width="1"/>
+        <text x="130" y="234" text-anchor="middle" fill="#ff8c42" font-family="JetBrains Mono" font-size="10">💻 PC1</text>
+
+        <rect x="180" y="215" width="60" height="30" rx="4" fill="#0d1117" stroke="#ff8c42" stroke-width="1"/>
+        <text x="210" y="234" text-anchor="middle" fill="#ff8c42" font-family="JetBrains Mono" font-size="10">💻 PC2</text>
+
+        <text x="170" y="280" text-anchor="middle" fill="#9aa5b8" font-family="Heebo" font-size="11">GPO: שולחן מנוהל,</text>
+        <text x="170" y="295" text-anchor="middle" fill="#9aa5b8" font-family="Heebo" font-size="11">RDP מותר</text>
+
+        <!-- OU 2: Sales -->
+        <rect x="280" y="80" width="180" height="220" rx="8" fill="#1a2235" stroke="#ffd166" stroke-width="2"/>
+        <text x="370" y="105" text-anchor="middle" fill="#ffd166" font-family="Heebo" font-size="14" font-weight="700">OU: Sales</text>
+
+        <rect x="300" y="125" width="60" height="30" rx="4" fill="#0d1117" stroke="#10ff80" stroke-width="1"/>
+        <text x="330" y="144" text-anchor="middle" fill="#10ff80" font-family="JetBrains Mono" font-size="10">👤 User</text>
+
+        <rect x="380" y="125" width="60" height="30" rx="4" fill="#0d1117" stroke="#10ff80" stroke-width="1"/>
+        <text x="410" y="144" text-anchor="middle" fill="#10ff80" font-family="JetBrains Mono" font-size="10">👤 User</text>
+
+        <rect x="300" y="170" width="140" height="30" rx="4" fill="#0d1117" stroke="#b16cff" stroke-width="1"/>
+        <text x="370" y="189" text-anchor="middle" fill="#b16cff" font-family="JetBrains Mono" font-size="10">👥 Group: Sales</text>
+
+        <rect x="300" y="215" width="60" height="30" rx="4" fill="#0d1117" stroke="#ff8c42" stroke-width="1"/>
+        <text x="330" y="234" text-anchor="middle" fill="#ff8c42" font-family="JetBrains Mono" font-size="10">💻 PC3</text>
+
+        <rect x="380" y="215" width="60" height="30" rx="4" fill="#0d1117" stroke="#ff8c42" stroke-width="1"/>
+        <text x="410" y="234" text-anchor="middle" fill="#ff8c42" font-family="JetBrains Mono" font-size="10">💻 PC4</text>
+
+        <text x="370" y="280" text-anchor="middle" fill="#9aa5b8" font-family="Heebo" font-size="11">GPO: גישה ל-CRM,</text>
+        <text x="370" y="295" text-anchor="middle" fill="#9aa5b8" font-family="Heebo" font-size="11">USB חסום</text>
+
+        <!-- OU 3: Servers -->
+        <rect x="480" y="80" width="150" height="220" rx="8" fill="#1a2235" stroke="#ffd166" stroke-width="2"/>
+        <text x="555" y="105" text-anchor="middle" fill="#ffd166" font-family="Heebo" font-size="14" font-weight="700">OU: Servers</text>
+
+        <rect x="495" y="125" width="120" height="30" rx="4" fill="#0d1117" stroke="#ff8c42" stroke-width="1"/>
+        <text x="555" y="144" text-anchor="middle" fill="#ff8c42" font-family="JetBrains Mono" font-size="10">💻 FILE-SRV</text>
+
+        <rect x="495" y="170" width="120" height="30" rx="4" fill="#0d1117" stroke="#ff8c42" stroke-width="1"/>
+        <text x="555" y="189" text-anchor="middle" fill="#ff8c42" font-family="JetBrains Mono" font-size="10">💻 WEB-SRV</text>
+
+        <text x="555" y="240" text-anchor="middle" fill="#9aa5b8" font-family="Heebo" font-size="11">GPO: Audit מוגבר,</text>
+        <text x="555" y="255" text-anchor="middle" fill="#9aa5b8" font-family="Heebo" font-size="11">חוקי FW קשיחים</text>
+      </svg>
+      <p class="diagram-caption">דוגמה לארכיטקטורה לוגית - דומיין אחד מחולק ל-OUs לפי מחלקות, כל OU עם GPO משלו.</p>
+    </div>
+
+    <p>
+      היופי במבנה הזה הוא שכל OU יכול לקבל מדיניות (GPO) משלו. למשל, אנשי ה-IT מקבלים זכויות נרחבות,
+      בעוד שאנשי המכירות מקבלים גישה ל-CRM אבל ה-USB שלהם חסום למניעת דליפת מידע.
+    </p>
+  </div>
+
+  <!-- 2.4 AD Entities -->
+  <div class="content-block">
+    <h3>2.4 - ה-Entities של AD - 4 סוגי האובייקטים העיקריים</h3>
+
+    <p>
+      ב-AD יש <strong>4 סוגי אובייקטים עיקריים</strong>. כל מה שאתה רואה ב-ADUC הוא אחד מהם
+      (או וריאציה שלהם):
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card" style="border-color: var(--accent-green);">
+        <span class="icon">👤</span>
+        <h4 style="color: var(--accent-green);">Users (משתמשים)</h4>
+        <p>חשבונות של אנשים שיכולים להתחבר לדומיין. לכל משתמש יש שם, סיסמה, ופרטים נוספים.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;"><strong>מזהה ייחודי:</strong> SID, UPN, SamAccountName</p>
+      </div>
+
+      <div class="feature-card" style="border-color: var(--accent-orange);">
+        <span class="icon">💻</span>
+        <h4 style="color: var(--accent-orange);">Computers (מחשבים)</h4>
+        <p>כל מחשב שמחובר לדומיין מקבל "חשבון מחשב" משלו. גם הוא מתאמת מול ה-DC.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;"><strong>מזהה ייחודי:</strong> שם מחשב מסתיים ב-$ (לדוגמה <span class="code-inline">PC1$</span>)</p>
+      </div>
+
+      <div class="feature-card" style="border-color: var(--accent-purple);">
+        <span class="icon">👥</span>
+        <h4 style="color: var(--accent-purple);">Groups (קבוצות)</h4>
+        <p>אוסף של משתמשים ו/או מחשבים. נותנים הרשאות לקבוצה במקום למשתמש בודד.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;"><strong>2 סוגים:</strong> Security Group, Distribution Group</p>
+      </div>
+
+      <div class="feature-card" style="border-color: var(--accent-yellow);">
+        <span class="icon">📁</span>
+        <h4 style="color: var(--accent-yellow);">OUs (Organizational Units)</h4>
+        <p>"תיקיות" שמקבצות אובייקטים יחד. משמשות גם להחלת GPOs ולהפרדת מחלקות.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;"><strong>חשוב:</strong> אובייקט יכול להיות רק ב-OU אחד בכל פעם.</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-title">הבדל קריטי: OU vs. Container</div>
+      <p style="margin:0;">
+        <strong>OU</strong> זה לא אותו דבר כמו <strong>Container</strong>! ב-ADUC ייראו דומה, אבל:
+        על OU אפשר להחיל GPO, על Container - <strong>לא</strong>. ה-Containers הם המובנים מראש
+        כמו <span class="code-inline">Users</span>, <span class="code-inline">Computers</span>, <span class="code-inline">Builtin</span>.
+      </p>
+    </div>
+  </div>
+
+  <!-- 2.5 Default Containers -->
+  <div class="content-block">
+    <h3>2.5 - Containers ו-OUs המובנים</h3>
+
+    <p>
+      ברגע שמקימים דומיין חדש, AD יוצר אוטומטית כמה Containers ו-OUs ברירת מחדל. חשוב להכיר כל אחד:
+    </p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>השם</th>
+            <th>סוג</th>
+            <th>תפקיד</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="code-inline">Builtin</span></td>
+            <td>Container</td>
+            <td>קבוצות מובנות עם הרשאות מנהליות (Administrators, Backup Operators, וכו')</td>
+          </tr>
+          <tr>
+            <td><span class="code-inline">Computers</span></td>
+            <td>Container</td>
+            <td>מיקום ברירת מחדל למחשבים שמצטרפים לדומיין</td>
+          </tr>
+          <tr>
+            <td><span class="code-inline">Domain Controllers</span></td>
+            <td><strong>OU</strong></td>
+            <td>OU מיוחד עבור כל ה-DCs. ה-OU הראשון שנוצר בדומיין!</td>
+          </tr>
+          <tr>
+            <td><span class="code-inline">ForeignSecurityPrincipals</span></td>
+            <td>Container</td>
+            <td>מאחסן הפניות לאובייקטים מ-Forests אחרים שמורשים</td>
+          </tr>
+          <tr>
+            <td><span class="code-inline">Managed Service Accounts</span></td>
+            <td>Container</td>
+            <td>חשבונות שירות מנוהלים (gMSA, MSA) - חשבונות עם סיסמה שמתחלפת אוטומטית</td>
+          </tr>
+          <tr>
+            <td><span class="code-inline">Users</span></td>
+            <td>Container</td>
+            <td>מיקום ברירת מחדל למשתמשים וקבוצות חדשים</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">🎯</span>
+      <div class="callout-title">Best Practice</div>
+      <p style="margin:0;">
+        <strong>אל תשאיר משתמשים ב-Container "Users"!</strong> בנה מבנה OUs מסודר (למשל לפי מחלקות) והעבר את
+        המשתמשים אליו. ככה תוכל להחיל GPOs בקלות. ה-Container "Users" לא תומך ב-GPOs.
+      </p>
+    </div>
+
+    <h4>איך לראות את המבנה?</h4>
+
+    <div class="ui-mockup">
+      <div class="ui-mockup-titlebar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span style="color: var(--text-muted); font-size:0.85rem;">Active Directory Users and Computers - hackeru.local</span>
+      </div>
+      <div class="ui-mockup-content">
+        <div class="menu-item">📁 hackeru.local</div>
+        <div class="menu-item" style="padding-right:2rem;">📦 Builtin</div>
+        <div class="menu-item" style="padding-right:2rem;">📦 Computers</div>
+        <div class="menu-item highlight" style="padding-right:2rem;">📁 Domain Controllers  <span style="color: var(--accent-yellow); margin-right:0.5rem;">[OU]</span></div>
+        <div class="menu-item" style="padding-right:2rem;">📦 ForeignSecurityPrincipals</div>
+        <div class="menu-item" style="padding-right:2rem;">📦 Managed Service Accounts</div>
+        <div class="menu-item" style="padding-right:2rem;">📦 Users</div>
+        <div class="menu-item" style="padding-right:2rem; color: var(--accent-yellow);">📁 IT-Department  <span style="margin-right:0.5rem;">[OU שיצרת]</span></div>
+        <div class="menu-item" style="padding-right:2rem; color: var(--accent-yellow);">📁 Sales  <span style="margin-right:0.5rem;">[OU שיצרת]</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <h4>✓ בדיקת הבנה - שעה 2</h4>
+    <ol>
+      <li>איפה נמצא הקובץ NTDS.DIT? מה הוא מכיל?</li>
+      <li>מה ההבדל בין Container ל-OU?</li>
+      <li>למה צריך Global Catalog? מתי הוא חשוב במיוחד?</li>
+      <li>תן 3 דוגמאות לאובייקטים שנשמרים ב-AD ואיך הם מסומנים.</li>
+      <li>למה Domain Controllers הוא OU ולא Container?</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- HOUR 3: AD MANAGEMENT - GUI & POWERSHELL                      -->
+<!-- ============================================================ -->
+<section id="hour3" class="lesson-section">
+  <div class="section-header">
+    <div class="section-number">03</div>
+    <div class="section-header-content">
+      <h2>ניהול AD - גם ב-GUI וגם ב-PowerShell</h2>
+      <p class="subtitle">השעה השלישית - הליבה של העבודה היומיומית: יצירה, עריכה ומחיקה של משתמשים, קבוצות ו-OUs.</p>
+    </div>
+    <div class="section-duration">60 דק'</div>
+  </div>
+
+  <!-- 3.1 Two approaches -->
+  <div class="content-block">
+    <h3>3.1 - שתי גישות לניהול: GUI vs PowerShell</h3>
+
+    <p>
+      כל פעולה ב-AD אפשר לבצע בשתי דרכים. שתיהן עושות את אותו הדבר - האחת ידידותית למתחילים, השנייה מהירה יותר ומתאימה לאוטומציה.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card" style="border-color: var(--accent-cyan);">
+        <span class="icon">🖱</span>
+        <h4 style="color: var(--accent-cyan);">GUI (Graphical Tools)</h4>
+        <ul style="font-size:0.95rem; margin-top:0.5rem;">
+          <li>ADUC (Users & Computers)</li>
+          <li>Administrative Center (ADAC)</li>
+          <li>RSAT (לניהול מרחוק)</li>
+        </ul>
+        <p style="margin-top:0.5rem; font-size:0.9rem; color: var(--accent-green);">
+          ✓ קל למתחילים<br>
+          ✓ ויזואלי וברור<br>
+          ✗ איטי לפעולות חוזרות
+        </p>
+      </div>
+
+      <div class="feature-card" style="border-color: var(--accent-purple);">
+        <span class="icon">⌨</span>
+        <h4 style="color: var(--accent-purple);">PowerShell</h4>
+        <ul style="font-size:0.95rem; margin-top:0.5rem;">
+          <li>Active Directory Module</li>
+          <li>Cmdlets ייעודיים</li>
+          <li>תמיכה ב-scripts</li>
+        </ul>
+        <p style="margin-top:0.5rem; font-size:0.9rem; color: var(--accent-green);">
+          ✓ מהיר במיוחד<br>
+          ✓ אוטומציה ו-bulk operations<br>
+          ✓ קל לשחזור והעתקה<br>
+          ✗ עקומת למידה תלולה יותר
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.2 PowerShell setup -->
+  <div class="content-block">
+    <h3>3.2 - איך לפתוח PowerShell עם מודול AD?</h3>
+
+    <p>על מנת להריץ פקודות AD ב-PowerShell, צריך לטעון את המודול. במחשב שהוא DC זה אוטומטי, אבל במחשב לקוח צריך להתקין RSAT.</p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח PowerShell בהרשאות אדמין</h4>
+        <p>לחץ <span class="keyboard">⊞ Start</span>, חפש "PowerShell", לחץ קליק ימני ובחר <strong>Run as Administrator</strong>.</p>
+      </div>
+      <div class="step">
+        <h4>טען את המודול של AD</h4>
+        <p>הקלד את הפקודה הבאה:</p>
+        <div class="code-block" style="margin-top:0.5rem;">
+<pre><code><span class="token-cmdlet">Import-Module</span> ActiveDirectory</code></pre>
+        </div>
+      </div>
+      <div class="step">
+        <h4>בדוק שהמודול נטען</h4>
+        <p>בדוק שאתה רואה את כל הפקודות הזמינות:</p>
+        <div class="code-block" style="margin-top:0.5rem;">
+<pre><code><span class="token-cmdlet">Get-Command</span> <span class="token-operator">-Module</span> ActiveDirectory <span class="token-operator">|</span> <span class="token-cmdlet">Measure-Object</span>
+
+<span class="token-comment"># אמורות להיות בערך 147 פקודות</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.3 Creating a User -->
+  <div class="content-block">
+    <h3>3.3 - יצירת משתמש - GUI</h3>
+
+    <p>נתחיל עם הדרך הוויזואלית.</p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח את ADUC</h4>
+        <p><span class="keyboard">Win + R</span> ← הקלד <span class="code-inline">dsa.msc</span> ← <span class="keyboard">Enter</span></p>
+      </div>
+      <div class="step">
+        <h4>נווט ל-OU שבו תרצה ליצור את המשתמש</h4>
+        <p>לדוגמה: <span class="code-inline">hackeru.local → IT-Department</span></p>
+      </div>
+      <div class="step">
+        <h4>קליק ימני על ה-OU</h4>
+        <p>בחר <span class="code-inline">New → User</span></p>
+      </div>
+      <div class="step">
+        <h4>מלא את הפרטים</h4>
+        <p>
+          ב-Wizard שנפתח: First name, Last name, <strong>User logon name</strong> (לדוגמה: <span class="code-inline">tzukerman</span>).<br>
+          ה-UPN (User Principal Name) ייווצר אוטומטית: <span class="code-inline">tzukerman@hackeru.local</span>
+        </p>
+      </div>
+      <div class="step">
+        <h4>קבע סיסמה</h4>
+        <p>בחלון הבא, הזן סיסמה. שתי אופציות חשובות:</p>
+        <ul>
+          <li><strong>User must change password at next logon</strong> - הסיסמה זמנית, המשתמש יחליף בכניסה הראשונה. ✓ מומלץ.</li>
+          <li><strong>Password never expires</strong> - הסיסמה לעולם לא תפוג. ✗ לא מומלץ - רק לחשבונות שירות.</li>
+        </ul>
+      </div>
+      <div class="step">
+        <h4>סיים ובדוק</h4>
+        <p>לחץ Next ← Finish. המשתמש אמור להופיע ב-OU.</p>
+      </div>
+    </div>
+
+    <h4>עריכת מאפייני המשתמש (Properties)</h4>
+
+    <p>אחרי שיצרת את המשתמש, אפשר לערוך את כל המאפיינים שלו. <strong>קליק ימני</strong> על המשתמש ← <span class="code-inline">Properties</span>. תופיע חלונית עם המון לשוניות. הכי חשובות:</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>הלשונית</th>
+            <th>למה היא משמשת</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>General</strong></td>
+            <td>שם פרטי, שם משפחה, תיאור, אימייל, טלפון</td>
+          </tr>
+          <tr>
+            <td><strong>Account</strong></td>
+            <td>שם המשתמש, UPN, שעות התחברות מותרות, ממחשבים אילו, תוקף החשבון</td>
+          </tr>
+          <tr>
+            <td><strong>Profile</strong></td>
+            <td>נתיב פרופיל, drive ממופה, סקריפט login</td>
+          </tr>
+          <tr>
+            <td><strong>Member Of</strong></td>
+            <td>רשימת הקבוצות שהמשתמש שייך אליהן + הוספה/הסרה</td>
+          </tr>
+          <tr>
+            <td><strong>Organization</strong></td>
+            <td>תפקיד, מחלקה, מנהל ישיר</td>
+          </tr>
+          <tr>
+            <td><strong>Dial-in</strong></td>
+            <td>הגדרות חיוג מרחוק (VPN, RAS)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warning">
+      <span class="callout-icon">🔍</span>
+      <div class="callout-title">לשונית מוסתרת ששווה לדעת: Attribute Editor</div>
+      <p style="margin:0;">
+        כברירת מחדל, הלשונית <strong>Attribute Editor</strong> חבויה. כדי לראות אותה: ב-ADUC, לחץ
+        <span class="code-inline">View → Advanced Features</span>. עכשיו תיפתח לשונית שמראה את <strong>כל</strong>
+        המאפיינים של האובייקט - כולל SID, GUID, ועוד מאות שדות. שימושי במיוחד לפן-טסטים.
+      </p>
+    </div>
+  </div>
+
+  <!-- 3.4 Creating user with PowerShell -->
+  <div class="content-block">
+    <h3>3.4 - יצירת משתמש - PowerShell</h3>
+
+    <p>אותה פעולה, עם פקודה אחת:</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>PowerShell - New-ADUser</span>
+      </div>
+<pre><code><span class="token-cmdlet">New-ADUser</span> <span class="token-operator">`</span>
+    <span class="token-param">-Name</span> <span class="token-string">"John Doe"</span> <span class="token-operator">`</span>
+    <span class="token-param">-GivenName</span> <span class="token-string">"John"</span> <span class="token-operator">`</span>
+    <span class="token-param">-Surname</span> <span class="token-string">"Doe"</span> <span class="token-operator">`</span>
+    <span class="token-param">-SamAccountName</span> <span class="token-string">"j.doe"</span> <span class="token-operator">`</span>
+    <span class="token-param">-UserPrincipalName</span> <span class="token-string">"j.doe@hackeru.local"</span> <span class="token-operator">`</span>
+    <span class="token-param">-Path</span> <span class="token-string">"OU=IT-Department,DC=hackeru,DC=local"</span> <span class="token-operator">`</span>
+    <span class="token-param">-AccountPassword</span> (<span class="token-cmdlet">Read-Host</span> <span class="token-string">"Enter password"</span> <span class="token-param">-AsSecureString</span>) <span class="token-operator">`</span>
+    <span class="token-param">-Enabled</span> <span class="token-keyword">$true</span> <span class="token-operator">`</span>
+    <span class="token-param">-ChangePasswordAtLogon</span> <span class="token-keyword">$true</span></code></pre>
+    </div>
+
+    <h4>פירוק הפקודה - שדה אחר שדה</h4>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>הפרמטר</th><th>הסבר</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="code-inline">-Name</span></td><td>השם המוצג ב-AD. חייב להיות ייחודי בתוך ה-OU.</td></tr>
+          <tr><td><span class="code-inline">-GivenName</span></td><td>שם פרטי</td></tr>
+          <tr><td><span class="code-inline">-Surname</span></td><td>שם משפחה</td></tr>
+          <tr><td><span class="code-inline">-SamAccountName</span></td><td>שם הכניסה למערכת (pre-Windows 2000). מוגבל ל-20 תווים.</td></tr>
+          <tr><td><span class="code-inline">-UserPrincipalName</span></td><td>שם הכניסה המודרני בפורמט email. לדוגמה <span class="code-inline">user@domain</span></td></tr>
+          <tr><td><span class="code-inline">-Path</span></td><td>איפה ה-OU/Container ב-AD. בפורמט <strong>DN</strong> - Distinguished Name.</td></tr>
+          <tr><td><span class="code-inline">-AccountPassword</span></td><td>הסיסמה - חייבת להיות מסוג SecureString.</td></tr>
+          <tr><td><span class="code-inline">-Enabled</span></td><td><span class="code-inline">$true</span> = החשבון פעיל, <span class="code-inline">$false</span> = מנוטרל.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">📌</span>
+      <div class="callout-title">מה זה DN (Distinguished Name)?</div>
+      <p style="margin:0;">
+        DN הוא הכתובת המלאה של אובייקט ב-AD. הוא נכתב <strong>מימין לשמאל</strong> בהיררכיה:<br>
+        <span class="code-inline">CN=John Doe,OU=IT,DC=hackeru,DC=local</span><br>
+        כלומר: יוזר John Doe → בתוך OU בשם IT → בתוך הדומיין hackeru.local.<br>
+        <strong>CN</strong> = Common Name, <strong>OU</strong> = Organizational Unit, <strong>DC</strong> = Domain Component.
+      </p>
+    </div>
+
+    <h4>פקודות נוספות לניהול משתמשים</h4>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>PowerShell - User Management</span>
+      </div>
+<pre><code><span class="token-comment"># שליפת משתמש לפי שם</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Identity</span> <span class="token-string">"j.doe"</span>
+
+<span class="token-comment"># שליפה עם כל המאפיינים</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Identity</span> <span class="token-string">"j.doe"</span> <span class="token-param">-Properties</span> <span class="token-operator">*</span>
+
+<span class="token-comment"># שליפת כל המשתמשים שמשהו בשם שלהם מכיל "doe"</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Filter</span> <span class="token-string">"Name -like '*doe*'"</span>
+
+<span class="token-comment"># איפוס סיסמה</span>
+<span class="token-cmdlet">Set-ADAccountPassword</span> <span class="token-param">-Identity</span> <span class="token-string">"j.doe"</span> <span class="token-param">-Reset</span> <span class="token-operator">`</span>
+    <span class="token-param">-NewPassword</span> (<span class="token-cmdlet">ConvertTo-SecureString</span> <span class="token-string">"NewP@ss123!"</span> <span class="token-param">-AsPlainText</span> <span class="token-param">-Force</span>)
+
+<span class="token-comment"># נטרול חשבון</span>
+<span class="token-cmdlet">Disable-ADAccount</span> <span class="token-param">-Identity</span> <span class="token-string">"j.doe"</span>
+
+<span class="token-comment"># הפעלת חשבון</span>
+<span class="token-cmdlet">Enable-ADAccount</span> <span class="token-param">-Identity</span> <span class="token-string">"j.doe"</span>
+
+<span class="token-comment"># מחיקת משתמש</span>
+<span class="token-cmdlet">Remove-ADUser</span> <span class="token-param">-Identity</span> <span class="token-string">"j.doe"</span> <span class="token-param">-Confirm:</span><span class="token-keyword">$false</span>
+
+<span class="token-comment"># העברה ל-OU אחר</span>
+<span class="token-cmdlet">Move-ADObject</span> <span class="token-param">-Identity</span> <span class="token-string">"CN=John Doe,OU=IT,DC=hackeru,DC=local"</span> <span class="token-operator">`</span>
+    <span class="token-param">-TargetPath</span> <span class="token-string">"OU=Sales,DC=hackeru,DC=local"</span></code></pre>
+    </div>
+  </div>
+
+  <!-- 3.5 Groups -->
+  <div class="content-block">
+    <h3>3.5 - יצירת קבוצות (Groups)</h3>
+
+    <p>קבוצות הן הליבה של ניהול הרשאות ב-AD. במקום לתת הרשאות לכל משתמש בנפרד, נותנים לקבוצה.</p>
+
+    <h4>שני סוגי קבוצות</h4>
+
+    <div class="feature-grid">
+      <div class="feature-card" style="border-color: var(--accent-cyan);">
+        <span class="icon">🔐</span>
+        <h4 style="color: var(--accent-cyan);">Security Group</h4>
+        <p>משמש להענקת <strong>הרשאות</strong>. לדוגמה: גישה לתיקייה, לקובץ, למדפסת.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem; color: var(--text-primary);">
+          זה הסוג הנפוץ ביותר.
+        </p>
+      </div>
+      <div class="feature-card" style="border-color: var(--accent-yellow);">
+        <span class="icon">📧</span>
+        <h4 style="color: var(--accent-yellow);">Distribution Group</h4>
+        <p>משמש <strong>בעיקר לאימייל</strong> - רשימות תפוצה ב-Exchange. <strong>אי אפשר</strong> לתת הרשאות.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem; color: var(--text-primary);">
+          אם יש ספק - בחר Security.
+        </p>
+      </div>
+    </div>
+
+    <h4>טווחי קבוצה (Group Scope)</h4>
+
+    <p>לכל קבוצה יש גם <strong>scope</strong> - הקבוצה הזו תקפה רק בדומיין שלה? או גם בדומיינים אחרים?</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Scope</th>
+            <th>איפה הקבוצה תקפה</th>
+            <th>מי יכול להיות בה</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Domain Local</strong></td>
+            <td>רק בדומיין שלה</td>
+            <td>חברים מכל דומיין ב-Forest</td>
+          </tr>
+          <tr>
+            <td><strong>Global</strong></td>
+            <td>בכל ה-Forest</td>
+            <td>רק חברים מאותו דומיין</td>
+          </tr>
+          <tr>
+            <td><strong>Universal</strong></td>
+            <td>בכל ה-Forest</td>
+            <td>חברים מכל דומיין ב-Forest</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">🎓</span>
+      <div class="callout-title">Best Practice: AGDLP / AGUDLP</div>
+      <p style="margin:0;">
+        העיקרון הקלאסי של מיקרוסופט:<br>
+        <strong>A</strong>ccounts → <strong>G</strong>lobal Groups → (<strong>U</strong>niversal Groups) → <strong>D</strong>omain <strong>L</strong>ocal Groups → <strong>P</strong>ermissions.<br>
+        כלומר: משתמשים נכנסים לקבוצות גלובליות, שנכנסות לקבוצות מקומיות, שמקבלות הרשאות. מקל על תחזוקה!
+      </p>
+    </div>
+
+    <h4>יצירת קבוצה - GUI</h4>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח ADUC ונווט ל-OU</h4>
+        <p><span class="code-inline">dsa.msc</span> ← נווט ל-OU רצוי</p>
+      </div>
+      <div class="step">
+        <h4>קליק ימני ← New → Group</h4>
+        <p></p>
+      </div>
+      <div class="step">
+        <h4>מלא פרטים</h4>
+        <p>
+          <strong>Group name:</strong> שם הקבוצה (לדוגמה <span class="code-inline">IT-Admins</span>)<br>
+          <strong>Group scope:</strong> Domain Local / Global / Universal<br>
+          <strong>Group type:</strong> Security / Distribution
+        </p>
+      </div>
+      <div class="step">
+        <h4>OK ← הקבוצה נוצרה</h4>
+        <p>עכשיו עליך להוסיף לה חברים: קליק ימני על הקבוצה ← <span class="code-inline">Properties</span> ← לשונית <span class="code-inline">Members</span> ← <span class="code-inline">Add</span>.</p>
+      </div>
+    </div>
+
+    <h4>יצירת קבוצה - PowerShell</h4>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>PowerShell - Group Management</span>
+      </div>
+<pre><code><span class="token-comment"># יצירת קבוצת אבטחה</span>
+<span class="token-cmdlet">New-ADGroup</span> <span class="token-operator">`</span>
+    <span class="token-param">-Name</span> <span class="token-string">"IT-Admins"</span> <span class="token-operator">`</span>
+    <span class="token-param">-SamAccountName</span> <span class="token-string">"IT-Admins"</span> <span class="token-operator">`</span>
+    <span class="token-param">-GroupCategory</span> Security <span class="token-operator">`</span>
+    <span class="token-param">-GroupScope</span> Global <span class="token-operator">`</span>
+    <span class="token-param">-DisplayName</span> <span class="token-string">"IT Administrators"</span> <span class="token-operator">`</span>
+    <span class="token-param">-Path</span> <span class="token-string">"OU=IT-Department,DC=hackeru,DC=local"</span> <span class="token-operator">`</span>
+    <span class="token-param">-Description</span> <span class="token-string">"מנהלי מערכות IT"</span>
+
+<span class="token-comment"># הוספת משתמש לקבוצה</span>
+<span class="token-cmdlet">Add-ADGroupMember</span> <span class="token-param">-Identity</span> <span class="token-string">"IT-Admins"</span> <span class="token-param">-Members</span> <span class="token-string">"j.doe"</span>
+
+<span class="token-comment"># הוספת מספר משתמשים בבת אחת</span>
+<span class="token-cmdlet">Add-ADGroupMember</span> <span class="token-param">-Identity</span> <span class="token-string">"IT-Admins"</span> <span class="token-operator">`</span>
+    <span class="token-param">-Members</span> <span class="token-string">"j.doe"</span>, <span class="token-string">"jane.smith"</span>, <span class="token-string">"bob.jones"</span>
+
+<span class="token-comment"># הצגת חברי הקבוצה</span>
+<span class="token-cmdlet">Get-ADGroupMember</span> <span class="token-param">-Identity</span> <span class="token-string">"IT-Admins"</span>
+
+<span class="token-comment"># הסרת חבר מקבוצה</span>
+<span class="token-cmdlet">Remove-ADGroupMember</span> <span class="token-param">-Identity</span> <span class="token-string">"IT-Admins"</span> <span class="token-param">-Members</span> <span class="token-string">"j.doe"</span> <span class="token-param">-Confirm:</span><span class="token-keyword">$false</span>
+
+<span class="token-comment"># מחיקת הקבוצה</span>
+<span class="token-cmdlet">Remove-ADGroup</span> <span class="token-param">-Identity</span> <span class="token-string">"IT-Admins"</span> <span class="token-param">-Confirm:</span><span class="token-keyword">$false</span></code></pre>
+    </div>
+  </div>
+
+  <!-- 3.6 Built-in Privilege Groups -->
+  <div class="content-block">
+    <h3>3.6 - קבוצות הרשאות מובנות (Built-in Privilege Groups)</h3>
+
+    <p>
+      AD יוצר אוטומטית כמה קבוצות עם הרשאות מנהליות מובנות. <strong>חיוני</strong> להכיר אותן - הן מהיעדים העיקריים של תוקפים.
+    </p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>הקבוצה</th>
+            <th>היכן נמצאת</th>
+            <th>מה ההרשאות</th>
+            <th>סיכון</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Enterprise Admins</strong></td>
+            <td>Users</td>
+            <td>שליטה מלאה ב<strong>כל</strong> ה-Forest, על כל הדומיינים</td>
+            <td><span style="color:var(--accent-red);">🔴 קריטי</span></td>
+          </tr>
+          <tr>
+            <td><strong>Domain Admins</strong></td>
+            <td>Users</td>
+            <td>שליטה מלאה בדומיין הספציפי</td>
+            <td><span style="color:var(--accent-red);">🔴 קריטי</span></td>
+          </tr>
+          <tr>
+            <td><strong>Schema Admins</strong></td>
+            <td>Users</td>
+            <td>שינוי ה-Schema (מבנה הנתונים) של AD</td>
+            <td><span style="color:var(--accent-red);">🔴 קריטי</span></td>
+          </tr>
+          <tr>
+            <td><strong>Administrators</strong></td>
+            <td>Builtin</td>
+            <td>הרשאות מנהליות ב-DC</td>
+            <td><span style="color:var(--accent-orange);">🟠 גבוה</span></td>
+          </tr>
+          <tr>
+            <td><strong>Server Operators</strong></td>
+            <td>Builtin</td>
+            <td>תחזוקה של DCs (לא יצירת אובייקטים)</td>
+            <td><span style="color:var(--accent-orange);">🟠 גבוה</span></td>
+          </tr>
+          <tr>
+            <td><strong>Backup Operators</strong></td>
+            <td>Builtin</td>
+            <td>גיבוי ושחזור של DCs (יכול לקרוא כל קובץ!)</td>
+            <td><span style="color:var(--accent-orange);">🟠 גבוה</span></td>
+          </tr>
+          <tr>
+            <td><strong>Account Operators</strong></td>
+            <td>Builtin</td>
+            <td>ניהול משתמשים וקבוצות (לא privileged)</td>
+            <td><span style="color:var(--accent-yellow);">🟡 בינוני</span></td>
+          </tr>
+          <tr>
+            <td><strong>Domain Users</strong></td>
+            <td>Users</td>
+            <td>כל המשתמשים בדומיין נכנסים אליה אוטומטית</td>
+            <td><span style="color:var(--accent-green);">🟢 נמוך</span></td>
+          </tr>
+          <tr>
+            <td><strong>Everyone</strong></td>
+            <td>(Implicit)</td>
+            <td>כל המשתמשים המאומתים + Guests</td>
+            <td><span style="color:var(--accent-green);">🟢 נמוך</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout danger">
+      <span class="callout-icon">🎯</span>
+      <div class="callout-title">פרספקטיבת פן-טסטר</div>
+      <p style="margin:0;">
+        ב-Pentest, המטרה הסופית של רוב המתקפות על דומיין היא להגיע לחבר <strong>Domain Admins</strong>
+        או <strong>Enterprise Admins</strong>. עם הרשאות כאלה, אתה למעשה "Game Over" - יש לך שליטה
+        מלאה. כלים כמו <span class="code-inline">BloodHound</span> בודקים בדיוק את הנתיבים האפשריים
+        להגיע לקבוצות הללו.
+      </p>
+    </div>
+  </div>
+
+  <!-- 3.7 OUs -->
+  <div class="content-block">
+    <h3>3.7 - יצירת OUs</h3>
+
+    <p>
+      OU (Organizational Unit) הוא יחידה ארגונית. תחשבו על זה כעל "תיקייה" ב-AD שיכולה להכיל
+      משתמשים, קבוצות, מחשבים ו-OUs אחרים (קינון).
+    </p>
+
+    <h4>למה בכלל ליצור OUs?</h4>
+    <ul>
+      <li><strong>החלת GPOs</strong> - אפשר להחיל מדיניות שונה לכל OU</li>
+      <li><strong>אצילת הרשאות</strong> (Delegation) - לתת לאדמין של מחלקה הרשאות רק על ה-OU שלה</li>
+      <li><strong>סדר וארגון</strong> - שאלפי אובייקטים לא יושבים בערימה אחת</li>
+    </ul>
+
+    <h4>יצירת OU - GUI</h4>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח ADUC</h4>
+        <p><span class="code-inline">dsa.msc</span></p>
+      </div>
+      <div class="step">
+        <h4>קליק ימני על המיקום הרצוי</h4>
+        <p>אם רוצים OU בשורש הדומיין: קליק ימני על הדומיין. אם רוצים OU בתוך OU אחר: קליק ימני עליו.</p>
+      </div>
+      <div class="step">
+        <h4>New → Organizational Unit</h4>
+        <p></p>
+      </div>
+      <div class="step">
+        <h4>תן שם</h4>
+        <p>לדוגמה: <span class="code-inline">Research and Development</span></p>
+      </div>
+      <div class="step">
+        <h4>סמן "Protect container from accidental deletion"</h4>
+        <p><strong>חשוב מאוד!</strong> זה מונע מחיקה בטעות. אפשר להסיר את הסימון אם באמת צריך למחוק.</p>
+      </div>
+    </div>
+
+    <h4>יצירת OU - PowerShell</h4>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>PowerShell - OU Management</span>
+      </div>
+<pre><code><span class="token-comment"># יצירת OU</span>
+<span class="token-cmdlet">New-ADOrganizationalUnit</span> <span class="token-operator">`</span>
+    <span class="token-param">-Name</span> <span class="token-string">"R&D"</span> <span class="token-operator">`</span>
+    <span class="token-param">-Path</span> <span class="token-string">"DC=hackeru,DC=local"</span> <span class="token-operator">`</span>
+    <span class="token-param">-ProtectedFromAccidentalDeletion</span> <span class="token-keyword">$true</span>
+
+<span class="token-comment"># יצירת OU מקונן (Nested OU)</span>
+<span class="token-cmdlet">New-ADOrganizationalUnit</span> <span class="token-operator">`</span>
+    <span class="token-param">-Name</span> <span class="token-string">"DevOps"</span> <span class="token-operator">`</span>
+    <span class="token-param">-Path</span> <span class="token-string">"OU=R&D,DC=hackeru,DC=local"</span>
+
+<span class="token-comment"># הצגת כל ה-OUs בדומיין</span>
+<span class="token-cmdlet">Get-ADOrganizationalUnit</span> <span class="token-param">-Filter</span> <span class="token-operator">*</span> <span class="token-operator">|</span> <span class="token-cmdlet">Select-Object</span> Name, DistinguishedName
+
+<span class="token-comment"># מחיקת OU (צריך קודם להסיר את הגנת המחיקה)</span>
+<span class="token-cmdlet">Set-ADOrganizationalUnit</span> <span class="token-param">-Identity</span> <span class="token-string">"OU=R&D,DC=hackeru,DC=local"</span> <span class="token-operator">`</span>
+    <span class="token-param">-ProtectedFromAccidentalDeletion</span> <span class="token-keyword">$false</span>
+<span class="token-cmdlet">Remove-ADOrganizationalUnit</span> <span class="token-param">-Identity</span> <span class="token-string">"OU=R&D,DC=hackeru,DC=local"</span> <span class="token-param">-Recursive</span></code></pre>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <h4>✓ תרגיל מעשי - שעה 3</h4>
+    <p>בצע את המשימות הבאות (בסביבת מעבדה!):</p>
+    <ol>
+      <li>צור OU חדש בשם <span class="code-inline">Pentesters</span> בשורש הדומיין.</li>
+      <li>בתוכו, צור 3 משתמשים: <span class="code-inline">pentester1</span>, <span class="code-inline">pentester2</span>, <span class="code-inline">pentester3</span>.</li>
+      <li>צור קבוצת אבטחה גלובלית בשם <span class="code-inline">Pentest-Team</span> ב-OU.</li>
+      <li>הוסף את שלושת המשתמשים לקבוצה - בפקודה אחת ב-PowerShell.</li>
+      <li>וודא שהקבוצה מכילה את כולם: <span class="code-inline">Get-ADGroupMember</span>.</li>
+      <li><strong>בונוס:</strong> עשה את כל זה גם ב-GUI - ופשוט תבדוק כמה זמן זה לוקח מול ה-PowerShell.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- HOUR 4: RSAT, SERVER MANAGER, MMC                              -->
+<!-- ============================================================ -->
+<section id="hour4" class="lesson-section">
+  <div class="section-header">
+    <div class="section-number">04</div>
+    <div class="section-header-content">
+      <h2>RSAT, Server Manager ו-MMC</h2>
+      <p class="subtitle">השעה הרביעית - ניהול שרתים מרחוק. איך מנהלים DC בלי לשבת מולו פיזית.</p>
+    </div>
+    <div class="section-duration">60 דק'</div>
+  </div>
+
+  <!-- 4.1 Server Manager -->
+  <div class="content-block">
+    <h3>4.1 - Server Manager - מה זה?</h3>
+
+    <p>
+      <strong>Server Manager</strong> הוא הקונסולה הראשית של Windows Server. זה המקום שדרכו מנהלים את
+      כל ה-Roles וה-Features של השרת. הוא נכנס ל-Windows Server 2008 ושודרג ב-Server 2012 לתמיכה
+      ב<strong>ניהול ריבוי שרתים</strong> ממקום אחד.
+    </p>
+
+    <div class="ui-mockup">
+      <div class="ui-mockup-titlebar">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span style="color: var(--text-muted); font-size:0.85rem;">Server Manager > Dashboard</span>
+      </div>
+      <div class="ui-mockup-content">
+        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 1rem;">
+          <div>
+            <div class="menu-item highlight">📊 Dashboard</div>
+            <div class="menu-item">🖥 Local Server</div>
+            <div class="menu-item">📡 All Servers</div>
+            <div class="menu-item">🏢 AD DS</div>
+            <div class="menu-item">🌐 DNS</div>
+            <div class="menu-item">📁 File and Storage Services</div>
+          </div>
+          <div>
+            <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+              <strong style="color: var(--accent-cyan);">WELCOME TO SERVER MANAGER</strong><br>
+              <span style="color: var(--text-secondary);">1. Configure this local server</span><br>
+              <span style="color: var(--text-secondary);">2. Add roles and features</span><br>
+              <span style="color: var(--text-secondary);">3. <strong style="color: var(--accent-yellow);">Add other servers to manage</strong></span><br>
+              <span style="color: var(--text-secondary);">4. Create a server group</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4>איך לפתוח את Server Manager?</h4>
+
+    <div class="steps">
+      <div class="step">
+        <h4>אוטומטית בכניסה</h4>
+        <p>ב-Windows Server, Server Manager נפתח אוטומטית כשמתחברים לשרת.</p>
+      </div>
+      <div class="step">
+        <h4>ידנית</h4>
+        <p>
+          <span class="keyboard">Win + R</span> ← הקלד <span class="code-inline">servermanager.exe</span> ← <span class="keyboard">Enter</span><br>
+          או חפש "Server Manager" בתפריט התחלה.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.2 RSAT -->
+  <div class="content-block">
+    <h3>4.2 - RSAT - Remote Server Administration Tools</h3>
+
+    <p>
+      <strong>RSAT</strong> הוא חבילת כלים שמאפשרת לנהל שרתים מרחוק <strong>ממחשב Client</strong>
+      (Windows 10/11) ולא רק מהשרת עצמו. זה מצב סטנדרטי - אדמינים לא יושבים פיזית מול ה-DC.
+    </p>
+
+    <h4>איך להתקין RSAT על Windows 10/11?</h4>
+
+    <p>החל מ-Windows 10 1809, RSAT הוא "Feature on Demand" - חלק מ-Windows. לא צריך להוריד קובץ נפרד.</p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח Settings</h4>
+        <p><span class="keyboard">Win + I</span></p>
+      </div>
+      <div class="step">
+        <h4>Apps → Optional features</h4>
+        <p>(ב-Windows 11: Apps → Optional features)</p>
+      </div>
+      <div class="step">
+        <h4>Add a feature</h4>
+        <p>חפש "<span class="code-inline">RSAT</span>" - יופיעו מספר חבילות.</p>
+      </div>
+      <div class="step">
+        <h4>סמן את הכלים הרצויים</h4>
+        <p>לפחות: <span class="code-inline">RSAT: Active Directory Domain Services and Lightweight Directory Services Tools</span></p>
+      </div>
+      <div class="step">
+        <h4>Install</h4>
+        <p>חכה דקה-שתיים. אחרי ההתקנה - כל הכלים שדיברנו עליהם יהיו זמינים בשולחן העבודה שלך.</p>
+      </div>
+    </div>
+
+    <h4>התקנה ב-PowerShell (מהיר יותר)</h4>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>PowerShell - Install RSAT</span>
+      </div>
+<pre><code><span class="token-comment"># הצג את כל החבילות הזמינות של RSAT</span>
+<span class="token-cmdlet">Get-WindowsCapability</span> <span class="token-param">-Name</span> RSAT<span class="token-operator">*</span> <span class="token-param">-Online</span>
+
+<span class="token-comment"># התקן ספציפית את כלי ה-AD</span>
+<span class="token-cmdlet">Add-WindowsCapability</span> <span class="token-param">-Online</span> <span class="token-operator">`</span>
+    <span class="token-param">-Name</span> <span class="token-string">"Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"</span>
+
+<span class="token-comment"># התקנה של הכל ב-bulk</span>
+<span class="token-cmdlet">Get-WindowsCapability</span> <span class="token-param">-Name</span> RSAT<span class="token-operator">*</span> <span class="token-param">-Online</span> <span class="token-operator">|</span>
+    <span class="token-cmdlet">Where-Object</span> State <span class="token-operator">-eq</span> <span class="token-string">"NotPresent"</span> <span class="token-operator">|</span>
+    <span class="token-cmdlet">Add-WindowsCapability</span> <span class="token-param">-Online</span></code></pre>
+    </div>
+  </div>
+
+  <!-- 4.3 Enable Remote Management -->
+  <div class="content-block">
+    <h3>4.3 - הפעלת ניהול מרחוק על השרת</h3>
+
+    <p>
+      כדי שנוכל לנהל שרת מרחוק, צריך לאשר את זה גם <strong>בשרת עצמו</strong>. ברירת המחדל ב-Windows
+      Server היא <strong>פעיל</strong>, אבל שווה לוודא.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>פתח Server Manager בשרת</h4>
+        <p></p>
+      </div>
+      <div class="step">
+        <h4>בחר Local Server מהתפריט</h4>
+        <p>בתפריט הצדדי השמאלי.</p>
+      </div>
+      <div class="step">
+        <h4>חפש את השדה "Remote management"</h4>
+        <p>הוא יופיע ב-Properties של השרת. הערך אמור להיות <span class="code-inline">Enabled</span>.</p>
+      </div>
+      <div class="step">
+        <h4>אם מנוטרל - לחץ עליו</h4>
+        <p>תיפתח חלונית. סמן את <span class="code-inline">Enable remote management of this server from other computers</span> ← OK.</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <span class="callout-icon">🔥</span>
+      <div class="callout-title">חומת אש (Firewall)</div>
+      <p style="margin:0;">
+        אם השרת מאחורי Firewall, צריך לפתוח פורטים. <strong>WinRM</strong> משתמש בפורט
+        <span class="code-inline">5985</span> (HTTP) או <span class="code-inline">5986</span> (HTTPS).
+        ל-MMC יידרשו פורטי RPC: <span class="code-inline">135</span> + טווח אקראי.
+      </p>
+    </div>
+  </div>
+
+  <!-- 4.4 Adding Servers -->
+  <div class="content-block">
+    <h3>4.4 - הוספת שרתים ל-Server Pool</h3>
+
+    <p>
+      בשביל לנהל שרת מרחוק דרך Server Manager, צריך קודם להוסיף אותו ל-<strong>Server Pool</strong>.
+      בלי זה, השרת לא יופיע ברשימה.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>בתוך Server Manager - לחץ Manage</h4>
+        <p>בפינה הימנית העליונה.</p>
+      </div>
+      <div class="step">
+        <h4>בחר Add Servers</h4>
+        <p>(או דרך Dashboard ← "Add other servers to manage")</p>
+      </div>
+      <div class="step">
+        <h4>בלשונית Active Directory</h4>
+        <p>הקלד את שם השרת ב-Name (CN) ← לחץ <span class="code-inline">Find Now</span>.</p>
+      </div>
+      <div class="step">
+        <h4>בחר את השרת ולחץ על החץ</h4>
+        <p>השרת יעבור לעמודה <strong>Selected</strong> מימין.</p>
+      </div>
+      <div class="step">
+        <h4>OK</h4>
+        <p>השרת מתווסף ל-Pool. עכשיו תוכל לנהל אותו דרך Server Manager.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.5 PowerShell Remoting -->
+  <div class="content-block">
+    <h3>4.5 - PowerShell Remoting - ניהול דרך הטרמינל</h3>
+
+    <p>
+      הדרך הכי חזקה לנהל שרת מרחוק היא <strong>PowerShell Remoting</strong>. זה מאפשר להריץ פקודות
+      ב-PowerShell על שרת מרוחק כאילו אתה יושב מולו פיזית.
+    </p>
+
+    <h4>הפעלה חד-פעמית</h4>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>PowerShell - Quick Commands</span>
+      </div>
+<pre><code><span class="token-comment"># הרצת פקודה אחת על שרת מרוחק</span>
+<span class="token-cmdlet">Invoke-Command</span> <span class="token-param">-ComputerName</span> SRV1 <span class="token-param">-ScriptBlock</span> { <span class="token-cmdlet">Get-Service</span> }
+
+<span class="token-comment"># הרצה על כמה שרתים בו-זמנית</span>
+<span class="token-cmdlet">Invoke-Command</span> <span class="token-param">-ComputerName</span> SRV1, SRV2, DC01 <span class="token-operator">`</span>
+    <span class="token-param">-ScriptBlock</span> { <span class="token-cmdlet">Get-Process</span> }
+
+<span class="token-comment"># הרצה עם credentials אחרים</span>
+<span class="token-cmdlet">Invoke-Command</span> <span class="token-param">-ComputerName</span> SRV1 <span class="token-operator">`</span>
+    <span class="token-param">-Credential</span> (<span class="token-cmdlet">Get-Credential</span>) <span class="token-operator">`</span>
+    <span class="token-param">-ScriptBlock</span> { <span class="token-cmdlet">Get-ChildItem</span> C:\ }
+
+<span class="token-comment"># הפעלה מחדש של שרת מרוחק</span>
+<span class="token-cmdlet">Restart-Computer</span> <span class="token-param">-ComputerName</span> SRV1 <span class="token-param">-Force</span></code></pre>
+    </div>
+
+    <h4>סשן אינטראקטיבי (כמו SSH)</h4>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>PowerShell - Interactive Session</span>
+      </div>
+<pre><code><span class="token-comment"># התחבר לסשן אינטראקטיבי</span>
+<span class="token-cmdlet">Enter-PSSession</span> <span class="token-param">-ComputerName</span> SRV1
+
+<span class="token-comment"># עכשיו ה-prompt משתנה ל-:</span>
+<span class="token-comment"># [SRV1]: PS C:\Users\Administrator\Documents></span>
+
+<span class="token-comment"># רוץ פקודות כמו רגיל...</span>
+<span class="token-cmdlet">Get-Service</span> spooler
+<span class="token-cmdlet">Get-EventLog</span> <span class="token-param">-LogName</span> Application <span class="token-param">-Newest</span> 10
+
+<span class="token-comment"># צא מהסשן</span>
+<span class="token-cmdlet">Exit-PSSession</span>
+
+<span class="token-comment"># סשן קבוע (לאוטומציה)</span>
+<span class="token-keyword">$session</span> <span class="token-operator">=</span> <span class="token-cmdlet">New-PSSession</span> <span class="token-param">-ComputerName</span> SRV1
+<span class="token-cmdlet">Invoke-Command</span> <span class="token-param">-Session</span> <span class="token-keyword">$session</span> <span class="token-param">-ScriptBlock</span> { <span class="token-cmdlet">hostname</span> }
+<span class="token-cmdlet">Remove-PSSession</span> <span class="token-keyword">$session</span></code></pre>
+    </div>
+
+    <div class="callout success">
+      <span class="callout-icon">🌐</span>
+      <div class="callout-title">Cross-Platform</div>
+      <p style="margin:0;">
+        החל מ-PowerShell 7, PowerShell Remoting תומך גם דרך SSH - אז אפשר להתחבר ממחשב Linux/Mac
+        לשרת Windows ולהפך! זה פותח אפשרויות גדולות לאדמינים מודרניים.
+      </p>
+    </div>
+  </div>
+
+  <!-- 4.6 MMC -->
+  <div class="content-block">
+    <h3>4.6 - Microsoft Management Console (MMC)</h3>
+
+    <p>
+      <strong>MMC</strong> הוא ה<strong>פריימוורק</strong> ש-Windows משתמש בו לכל הקונסולות הגרפיות שלה.
+      כל קובץ <span class="code-inline">.msc</span> הוא בעצם MMC טעון עם "snap-ins" מסוימים.
+    </p>
+
+    <p>תחשבו על זה כעל "תיבה ריקה" שתוכל לטעון לתוכה כל כלי ניהול שתרצה.</p>
+
+    <h4>פתיחת MMC ריק</h4>
+
+    <div class="steps">
+      <div class="step">
+        <h4>הרץ mmc</h4>
+        <p><span class="keyboard">Win + R</span> ← הקלד <span class="code-inline">mmc</span> ← <span class="keyboard">Enter</span></p>
+      </div>
+      <div class="step">
+        <h4>File → Add/Remove Snap-in</h4>
+        <p>או קיצור: <span class="keyboard">Ctrl + M</span></p>
+      </div>
+      <div class="step">
+        <h4>בחר snap-ins מהרשימה</h4>
+        <p>לדוגמה: <span class="code-inline">Active Directory Users and Computers</span>, <span class="code-inline">DNS</span>, <span class="code-inline">Group Policy Management</span></p>
+      </div>
+      <div class="step">
+        <h4>הוסף שרת יעד</h4>
+        <p>כשמוסיפים snap-in, ייפתח dialog ששואל "Local computer" או "Another computer". בחר "Another computer" והקלד את שם השרת המרוחק.</p>
+      </div>
+      <div class="step">
+        <h4>שמור את הקונסולה</h4>
+        <p>File → Save As → שמור כקובץ <span class="code-inline">.msc</span>. עכשיו יש לך קונסולה מותאמת אישית!</p>
+      </div>
+    </div>
+
+    <h4>קבצי MMC חשובים</h4>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>קובץ</th><th>פותח את</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="code-inline">compmgmt.msc</span></td><td>Computer Management - ניהול מחשב מקומי</td></tr>
+          <tr><td><span class="code-inline">dsa.msc</span></td><td>Active Directory Users and Computers</td></tr>
+          <tr><td><span class="code-inline">dssite.msc</span></td><td>AD Sites and Services</td></tr>
+          <tr><td><span class="code-inline">domain.msc</span></td><td>AD Domains and Trusts</td></tr>
+          <tr><td><span class="code-inline">gpmc.msc</span></td><td>Group Policy Management Console</td></tr>
+          <tr><td><span class="code-inline">gpedit.msc</span></td><td>Local Group Policy Editor</td></tr>
+          <tr><td><span class="code-inline">eventvwr.msc</span></td><td>Event Viewer</td></tr>
+          <tr><td><span class="code-inline">services.msc</span></td><td>Services</td></tr>
+          <tr><td><span class="code-inline">devmgmt.msc</span></td><td>Device Manager</td></tr>
+          <tr><td><span class="code-inline">diskmgmt.msc</span></td><td>Disk Management</td></tr>
+          <tr><td><span class="code-inline">secpol.msc</span></td><td>Local Security Policy</td></tr>
+          <tr><td><span class="code-inline">taskschd.msc</span></td><td>Task Scheduler</td></tr>
+          <tr><td><span class="code-inline">wf.msc</span></td><td>Windows Firewall with Advanced Security</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <h4>✓ תרגיל מעשי - שעה 4</h4>
+    <ol>
+      <li>במחשב Windows 10/11 - התקן RSAT.</li>
+      <li>פתח MMC ריק והוסף 3 snap-ins: ADUC, DNS, Event Viewer - הצבע על ה-DC המרוחק.</li>
+      <li>שמור את הקונסולה כקובץ <span class="code-inline">.msc</span> בשם <span class="code-inline">MyAdminConsole</span>.</li>
+      <li>פתח PowerShell ובצע <span class="code-inline">Enter-PSSession</span> ל-DC. רוץ <span class="code-inline">Get-ADUser -Filter *</span>. צא.</li>
+      <li>הוסף שרת נוסף ל-Server Pool של Server Manager.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- HOUR 5: LOGIN PROCESS                                          -->
+<!-- ============================================================ -->
+<section id="hour5" class="lesson-section">
+  <div class="section-header">
+    <div class="section-number">05</div>
+    <div class="section-header-content">
+      <h2>תהליך ההתחברות לדומיין + סיכום</h2>
+      <p class="subtitle">השעה החמישית - מה קורה "מאחורי הקלעים" כשמשתמש מקליד שם וסיסמה. ותרגול סופי.</p>
+    </div>
+    <div class="section-duration">60 דק'</div>
+  </div>
+
+  <!-- 5.1 Login Process Overview -->
+  <div class="content-block">
+    <h3>5.1 - מה קורה כשמחשב מתחבר לדומיין?</h3>
+
+    <p>
+      כשלוחצים <span class="keyboard">Ctrl + Alt + Delete</span> ומקלידים סיסמה, מאחורי הקלעים קורים
+      <strong>הרבה מאוד שלבים</strong> תוך שניות. בואו נבין אותם.
+    </p>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
+        <!-- Client -->
+        <rect x="20" y="20" width="200" height="50" rx="8" fill="#1a2235" stroke="#10ff80" stroke-width="2"/>
+        <text x="120" y="45" text-anchor="middle" fill="#10ff80" font-family="Heebo" font-size="14" font-weight="700">CLIENT</text>
+        <text x="120" y="62" text-anchor="middle" fill="#e4e9f2" font-family="JetBrains Mono" font-size="11">PC01</text>
+
+        <!-- DC -->
+        <rect x="480" y="20" width="200" height="50" rx="8" fill="#1a2235" stroke="#00d4ff" stroke-width="2"/>
+        <text x="580" y="45" text-anchor="middle" fill="#00d4ff" font-family="Heebo" font-size="14" font-weight="700">DOMAIN CONTROLLER</text>
+        <text x="580" y="62" text-anchor="middle" fill="#e4e9f2" font-family="JetBrains Mono" font-size="11">DC01.hackeru.local</text>
+
+        <!-- Vertical lines -->
+        <line x1="120" y1="80" x2="120" y2="480" stroke="#6b7388" stroke-width="2" stroke-dasharray="4,4"/>
+        <line x1="580" y1="80" x2="580" y2="480" stroke="#6b7388" stroke-width="2" stroke-dasharray="4,4"/>
+
+        <!-- Step 1: DNS query -->
+        <line x1="120" y1="110" x2="570" y2="110" stroke="#ffd166" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="100" text-anchor="middle" fill="#ffd166" font-family="JetBrains Mono" font-size="10" font-weight="700">1. DNS query: איפה ה-DC?</text>
+        <rect x="50" y="120" width="60" height="20" rx="3" fill="#ffd166" opacity="0.2"/>
+        <text x="80" y="134" text-anchor="middle" fill="#ffd166" font-family="JetBrains Mono" font-size="9">SRV record</text>
+
+        <!-- Step 2: DC found -->
+        <line x1="570" y1="160" x2="130" y2="160" stroke="#10ff80" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="150" text-anchor="middle" fill="#10ff80" font-family="JetBrains Mono" font-size="10" font-weight="700">2. DC נמצא: 10.0.0.1</text>
+
+        <!-- Step 3: Computer auth -->
+        <line x1="120" y1="200" x2="570" y2="200" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="190" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="10" font-weight="700">3. אימות המחשב (Computer Account)</text>
+
+        <!-- Step 4: GPO -->
+        <line x1="570" y1="240" x2="130" y2="240" stroke="#b16cff" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="230" text-anchor="middle" fill="#b16cff" font-family="JetBrains Mono" font-size="10" font-weight="700">4. החלת Computer GPO</text>
+
+        <!-- Step 5: User enters creds -->
+        <line x1="120" y1="290" x2="570" y2="290" stroke="#ff8c42" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="280" text-anchor="middle" fill="#ff8c42" font-family="JetBrains Mono" font-size="10" font-weight="700">5. user @ password (Kerberos AS-REQ)</text>
+
+        <!-- Step 6: TGT -->
+        <line x1="570" y1="330" x2="130" y2="330" stroke="#10ff80" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="320" text-anchor="middle" fill="#10ff80" font-family="JetBrains Mono" font-size="10" font-weight="700">6. TGT (Ticket-Granting Ticket)</text>
+        <rect x="630" y="335" width="60" height="20" rx="3" fill="#10ff80" opacity="0.2"/>
+        <text x="660" y="349" text-anchor="middle" fill="#10ff80" font-family="JetBrains Mono" font-size="9">KDC issues</text>
+
+        <!-- Step 7: User GPO -->
+        <line x1="570" y1="370" x2="130" y2="370" stroke="#b16cff" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="360" text-anchor="middle" fill="#b16cff" font-family="JetBrains Mono" font-size="10" font-weight="700">7. החלת User GPO</text>
+
+        <!-- Step 8: Access resources -->
+        <line x1="120" y1="420" x2="570" y2="420" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="410" text-anchor="middle" fill="#00d4ff" font-family="JetBrains Mono" font-size="10" font-weight="700">8. בקשת TGS לשירות (Kerberos TGS-REQ)</text>
+
+        <!-- Step 9: TGS -->
+        <line x1="570" y1="460" x2="130" y2="460" stroke="#10ff80" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="345" y="450" text-anchor="middle" fill="#10ff80" font-family="JetBrains Mono" font-size="10" font-weight="700">9. TGS (Service Ticket)</text>
+
+        <!-- Arrow marker definition -->
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="currentColor" style="color: inherit;"/>
+          </marker>
+        </defs>
+      </svg>
+      <p class="diagram-caption">תהליך ההתחברות המלא - מבקשה של ה-DNS ועד קבלת tickets של Kerberos.</p>
+    </div>
+  </div>
+
+  <!-- 5.2 Detailed Steps -->
+  <div class="content-block">
+    <h3>5.2 - הסבר מפורט של כל שלב</h3>
+
+    <div class="steps">
+      <div class="step">
+        <h4>שלב 1: המחשב נדלק - DNS Query</h4>
+        <p>
+          ברגע שהמחשב מקבל IP, הוא שולח שאילתת DNS מסוג <strong>SRV record</strong> כדי למצוא DC.<br>
+          הוא מחפש: <span class="code-inline">_ldap._tcp.dc._msdcs.hackeru.local</span>
+        </p>
+        <p style="color: var(--accent-yellow);">
+          📌 לכן <strong>חיוני</strong> שהמחשב יקבל את ה-DC כשרת DNS שלו. אם DNS שגוי - הלקוח לעולם לא ימצא את הדומיין.
+        </p>
+      </div>
+
+      <div class="step">
+        <h4>שלב 2: ה-DC מחזיר את כתובתו</h4>
+        <p>שרת ה-DNS (שעל גבי ה-DC עצמו!) מחזיר את כתובת ה-IP של DC זמין. אם יש כמה DCs - הלקוח יבחר את הקרוב ביותר על פי Sites and Services.</p>
+      </div>
+
+      <div class="step">
+        <h4>שלב 3: אימות המחשב (Computer Authentication)</h4>
+        <p>
+          זכרו - גם למחשב יש "חשבון" ב-AD! המחשב מאמת את עצמו מול ה-DC באמצעות הסיסמה המוצפנת שלו
+          (שמתחלפת אוטומטית כל 30 יום).<br>
+          זה <strong>קורה לפני</strong> שהמשתמש מקליד שם משתמש!
+        </p>
+      </div>
+
+      <div class="step">
+        <h4>שלב 4: החלת Computer GPOs</h4>
+        <p>
+          ה-DC שולח למחשב את ה-GPOs הרלוונטיים <strong>לרמת המחשב</strong>. דברים כמו: הגדרות חומת אש,
+          רשתות אסורות, הגדרות update, וכו'. החלק הזה נטען לפני מסך ההתחברות.
+        </p>
+      </div>
+
+      <div class="step">
+        <h4>שלב 5: המשתמש מקליד שם וסיסמה</h4>
+        <p>
+          המשתמש לוחץ <span class="keyboard">Ctrl + Alt + Del</span>, מקליד שם משתמש וסיסמה.<br>
+          המחשב שולח ל-DC בקשת אימות <strong>Kerberos AS-REQ</strong> (Authentication Service Request).
+        </p>
+        <p style="color: var(--accent-orange);">
+          🔐 הסיסמה <strong>לא נשלחת כפי שהיא</strong>! היא מוצפנת באמצעות hash. ה-DC כבר יודע את ה-hash הצפוי, ומשווה.
+        </p>
+      </div>
+
+      <div class="step">
+        <h4>שלב 6: ה-DC מחזיר TGT</h4>
+        <p>
+          אם הסיסמה נכונה, ה-DC (שמשמש גם כ-<strong>KDC - Key Distribution Center</strong>) מחזיר
+          <strong>TGT - Ticket Granting Ticket</strong>. זה כרטיס מוצפן שאומר "המשתמש הזה הזדהה בהצלחה".<br>
+          ה-TGT תקף כברירת מחדל ל-10 שעות.
+        </p>
+      </div>
+
+      <div class="step">
+        <h4>שלב 7: החלת User GPOs</h4>
+        <p>
+          עכשיו ה-DC שולח את ה-GPOs <strong>של המשתמש</strong>. דברים כמו: הגדרות שולחן עבודה,
+          drives ממופים, סקריפטי login, מדפסות זמינות. החלק הזה נטען אחרי ההתחברות, לפני שמופיע השולחן עבודה.
+        </p>
+      </div>
+
+      <div class="step">
+        <h4>שלב 8-9: גישה לשירותים (Kerberos TGS)</h4>
+        <p>
+          כשהמשתמש מנסה לגשת לשירות (לדוגמה תיקייה משותפת על שרת קבצים):<br>
+          • המחשב שולח את ה-TGT ל-DC ומבקש <strong>TGS - Ticket Granting Service</strong> לאותו שירות.<br>
+          • ה-DC מחזיר TGS מוצפן בסיסמה של חשבון השרת.<br>
+          • המחשב מציג את ה-TGS לשרת. השרת מאמת ונותן גישה.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout danger">
+      <span class="callout-icon">🎯</span>
+      <div class="callout-title">קשור לפן-טסטים: התקפות על Kerberos</div>
+      <p style="margin:0;">
+        רוב המתקפות המודרניות על AD מנצלות חולשות בתהליך הזה:<br>
+        • <strong>Kerberoasting</strong> - בקשת TGS לחשבון שירות וניסיון לפצח את ההצפנה offline.<br>
+        • <strong>AS-REP Roasting</strong> - חשבונות בלי "Pre-authentication" מאפשרים לקבל AS-REP ולפצח אותו.<br>
+        • <strong>Pass-the-Ticket</strong> - גניבת TGT ושימוש בו ממחשב אחר.<br>
+        • <strong>Golden Ticket</strong> - יצירת TGT מזויף עם hash של חשבון <span class="code-inline">krbtgt</span> - שליטה מלאה בדומיין.
+      </p>
+    </div>
+  </div>
+
+  <!-- 5.3 Verifying the Process -->
+  <div class="content-block">
+    <h3>5.3 - איך לבדוק שהכל עובד? (פקודות אבחון)</h3>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>Diagnostic Commands</span>
+      </div>
+<pre><code><span class="token-comment"># הצג את ה-tickets הנוכחיים של ה-Kerberos</span>
+klist
+
+<span class="token-comment"># מחק את כל ה-tickets (forced re-auth)</span>
+klist purge
+
+<span class="token-comment"># הצג את הדומיין של המחשב</span>
+<span class="token-cmdlet">Get-WmiObject</span> Win32_ComputerSystem <span class="token-operator">|</span> <span class="token-cmdlet">Select-Object</span> Domain
+
+<span class="token-comment"># בדוק חיבור ל-DC</span>
+nltest /dsgetdc:hackeru.local
+
+<span class="token-comment"># בדוק את כל ה-DCs בדומיין</span>
+nltest /dclist:hackeru.local
+
+<span class="token-comment"># מצא את ה-DC שמשתמש ספציפי התאמת אליו</span>
+nltest /sc_query:hackeru.local
+
+<span class="token-comment"># בדוק את החיבור של חשבון המחשב ל-DC</span>
+nltest /sc_verify:hackeru.local
+
+<span class="token-comment"># איתחל את הקשר של המחשב לדומיין (לפעמים פותר תקלות)</span>
+<span class="token-cmdlet">Reset-ComputerMachinePassword</span> <span class="token-param">-Server</span> DC01.hackeru.local
+
+<span class="token-comment"># הצג GPOs שהוחלו על המחשב</span>
+gpresult /h gpo-report.html
+<span class="token-cmdlet">Invoke-Item</span> gpo-report.html
+
+<span class="token-comment"># אילו GPOs הוחלו על המשתמש הנוכחי?</span>
+gpresult /r /scope:user
+
+<span class="token-comment"># רענן GPOs מיד</span>
+gpupdate /force</code></pre>
+    </div>
+  </div>
+
+  <!-- 5.4 Final Practical Exercise -->
+  <div class="content-block">
+    <h3>5.4 - תרגיל מעשי סופי: בניית סביבה מאפס</h3>
+
+    <p>
+      התרגיל הסופי הוא תרחיש <strong>מקצה לקצה</strong>. נדמיין שאנחנו אדמינים במשרד עורכי דין קטן שצריך
+      לבנות סביבה. נבנה את הכל ב-PowerShell.
+    </p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span>Complete Setup Script - LawFirm.ps1</span>
+      </div>
+<pre><code><span class="token-comment"># ============================================</span>
+<span class="token-comment"># הקמת AD למשרד עורכי דין - תרחיש מעשי</span>
+<span class="token-comment"># דרישות: דומיין lawfirm.local, 3 מחלקות,</span>
+<span class="token-comment"># 9 משתמשים, קבוצות הרשאה לכל מחלקה</span>
+<span class="token-comment"># ============================================</span>
+
+<span class="token-cmdlet">Import-Module</span> ActiveDirectory
+
+<span class="token-comment"># שלב 1: יצירת מבנה OUs</span>
+<span class="token-cmdlet">New-ADOrganizationalUnit</span> <span class="token-param">-Name</span> <span class="token-string">"Departments"</span> <span class="token-param">-Path</span> <span class="token-string">"DC=lawfirm,DC=local"</span>
+
+<span class="token-keyword">$departments</span> <span class="token-operator">=</span> <span class="token-string">"Litigation"</span>, <span class="token-string">"Corporate"</span>, <span class="token-string">"IT"</span>
+<span class="token-keyword">foreach</span> (<span class="token-keyword">$dept</span> <span class="token-keyword">in</span> <span class="token-keyword">$departments</span>) {
+    <span class="token-cmdlet">New-ADOrganizationalUnit</span> <span class="token-operator">`</span>
+        <span class="token-param">-Name</span> <span class="token-keyword">$dept</span> <span class="token-operator">`</span>
+        <span class="token-param">-Path</span> <span class="token-string">"OU=Departments,DC=lawfirm,DC=local"</span> <span class="token-operator">`</span>
+        <span class="token-param">-ProtectedFromAccidentalDeletion</span> <span class="token-keyword">$true</span>
+}
+
+<span class="token-comment"># שלב 2: יצירת קבוצות לכל מחלקה</span>
+<span class="token-keyword">foreach</span> (<span class="token-keyword">$dept</span> <span class="token-keyword">in</span> <span class="token-keyword">$departments</span>) {
+    <span class="token-cmdlet">New-ADGroup</span> <span class="token-operator">`</span>
+        <span class="token-param">-Name</span> <span class="token-string">"</span><span class="token-keyword">$dept</span><span class="token-string">-Users"</span> <span class="token-operator">`</span>
+        <span class="token-param">-GroupCategory</span> Security <span class="token-operator">`</span>
+        <span class="token-param">-GroupScope</span> Global <span class="token-operator">`</span>
+        <span class="token-param">-Path</span> <span class="token-string">"OU=</span><span class="token-keyword">$dept</span><span class="token-string">,OU=Departments,DC=lawfirm,DC=local"</span> <span class="token-operator">`</span>
+        <span class="token-param">-Description</span> <span class="token-string">"All users in </span><span class="token-keyword">$dept</span><span class="token-string"> department"</span>
+}
+
+<span class="token-comment"># שלב 3: יצירת 3 משתמשים בכל מחלקה</span>
+<span class="token-keyword">$password</span> <span class="token-operator">=</span> <span class="token-cmdlet">ConvertTo-SecureString</span> <span class="token-string">"TempP@ss2025!"</span> <span class="token-param">-AsPlainText</span> <span class="token-param">-Force</span>
+
+<span class="token-keyword">$users</span> <span class="token-operator">=</span> <span class="token-keyword">@</span>(
+    <span class="token-keyword">@</span>{First=<span class="token-string">"Alice"</span>; Last=<span class="token-string">"Cohen"</span>; Dept=<span class="token-string">"Litigation"</span>},
+    <span class="token-keyword">@</span>{First=<span class="token-string">"Bob"</span>; Last=<span class="token-string">"Levy"</span>; Dept=<span class="token-string">"Litigation"</span>},
+    <span class="token-keyword">@</span>{First=<span class="token-string">"Carol"</span>; Last=<span class="token-string">"Avraham"</span>; Dept=<span class="token-string">"Litigation"</span>},
+    <span class="token-keyword">@</span>{First=<span class="token-string">"David"</span>; Last=<span class="token-string">"Mizrahi"</span>; Dept=<span class="token-string">"Corporate"</span>},
+    <span class="token-keyword">@</span>{First=<span class="token-string">"Eva"</span>; Last=<span class="token-string">"Peretz"</span>; Dept=<span class="token-string">"Corporate"</span>},
+    <span class="token-keyword">@</span>{First=<span class="token-string">"Frank"</span>; Last=<span class="token-string">"Yosef"</span>; Dept=<span class="token-string">"Corporate"</span>},
+    <span class="token-keyword">@</span>{First=<span class="token-string">"Gila"</span>; Last=<span class="token-string">"Bar"</span>; Dept=<span class="token-string">"IT"</span>},
+    <span class="token-keyword">@</span>{First=<span class="token-string">"Hagai"</span>; Last=<span class="token-string">"Shalom"</span>; Dept=<span class="token-string">"IT"</span>},
+    <span class="token-keyword">@</span>{First=<span class="token-string">"Iris"</span>; Last=<span class="token-string">"Ben-David"</span>; Dept=<span class="token-string">"IT"</span>}
+)
+
+<span class="token-keyword">foreach</span> (<span class="token-keyword">$u</span> <span class="token-keyword">in</span> <span class="token-keyword">$users</span>) {
+    <span class="token-keyword">$sam</span> <span class="token-operator">=</span> <span class="token-string">"</span><span class="token-keyword">$</span>(<span class="token-keyword">$u</span>.First.Substring(0,1).ToLower())<span class="token-keyword">$</span>(<span class="token-keyword">$u</span>.Last.ToLower())<span class="token-string">"</span>
+
+    <span class="token-cmdlet">New-ADUser</span> <span class="token-operator">`</span>
+        <span class="token-param">-Name</span> <span class="token-string">"</span><span class="token-keyword">$</span>(<span class="token-keyword">$u</span>.First) <span class="token-keyword">$</span>(<span class="token-keyword">$u</span>.Last)<span class="token-string">"</span> <span class="token-operator">`</span>
+        <span class="token-param">-GivenName</span> <span class="token-keyword">$u</span>.First <span class="token-operator">`</span>
+        <span class="token-param">-Surname</span> <span class="token-keyword">$u</span>.Last <span class="token-operator">`</span>
+        <span class="token-param">-SamAccountName</span> <span class="token-keyword">$sam</span> <span class="token-operator">`</span>
+        <span class="token-param">-UserPrincipalName</span> <span class="token-string">"</span><span class="token-keyword">$sam</span><span class="token-string">@lawfirm.local"</span> <span class="token-operator">`</span>
+        <span class="token-param">-Path</span> <span class="token-string">"OU=</span><span class="token-keyword">$</span>(<span class="token-keyword">$u</span>.Dept)<span class="token-string">,OU=Departments,DC=lawfirm,DC=local"</span> <span class="token-operator">`</span>
+        <span class="token-param">-AccountPassword</span> <span class="token-keyword">$password</span> <span class="token-operator">`</span>
+        <span class="token-param">-Enabled</span> <span class="token-keyword">$true</span> <span class="token-operator">`</span>
+        <span class="token-param">-ChangePasswordAtLogon</span> <span class="token-keyword">$true</span> <span class="token-operator">`</span>
+        <span class="token-param">-Department</span> <span class="token-keyword">$u</span>.Dept
+
+    <span class="token-comment"># הוסף לקבוצה של המחלקה</span>
+    <span class="token-cmdlet">Add-ADGroupMember</span> <span class="token-param">-Identity</span> <span class="token-string">"</span><span class="token-keyword">$</span>(<span class="token-keyword">$u</span>.Dept)<span class="token-string">-Users"</span> <span class="token-param">-Members</span> <span class="token-keyword">$sam</span>
+}
+
+<span class="token-comment"># שלב 4: הענקת הרשאות מיוחדות ל-IT</span>
+<span class="token-cmdlet">Add-ADGroupMember</span> <span class="token-param">-Identity</span> <span class="token-string">"Domain Admins"</span> <span class="token-param">-Members</span> <span class="token-string">"gbar"</span>
+
+<span class="token-cmdlet">Write-Host</span> <span class="token-string">"✓ Setup complete!"</span> <span class="token-param">-ForegroundColor</span> Green
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Filter</span> <span class="token-operator">*</span> <span class="token-param">-SearchBase</span> <span class="token-string">"OU=Departments,DC=lawfirm,DC=local"</span> <span class="token-operator">|</span>
+    <span class="token-cmdlet">Format-Table</span> Name, SamAccountName, Department</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-title">למה זה עצום?</div>
+      <p style="margin:0;">
+        הסקריפט הזה יוצר <strong>9 משתמשים, 3 OUs ו-3 קבוצות + הקצאה לקבוצות, ב-30 שניות</strong>.<br>
+        ב-GUI זה היה לוקח 20-30 דקות של עבודה חוזרת ומשעממת. זה הכוח של PowerShell.
+      </p>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <h4>✓ סיכום השעה החמישית</h4>
+    <ol>
+      <li>הרץ <span class="code-inline">klist</span> במחשב שלך - תראה את ה-tickets הנוכחיים.</li>
+      <li>הרץ <span class="code-inline">gpresult /r</span> - תראה אילו GPOs הוחלו עליך.</li>
+      <li>נסה לזהות בכל שלב של הסכמה - איזה פרוטוקול משחק בו (DNS/LDAP/Kerberos/SMB).</li>
+      <li>הרץ את הסקריפט שלמעלה במעבדה. ודא שהכל עובד.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- BONUS: CHEAT SHEET                                             -->
+<!-- ============================================================ -->
+<section id="cheatsheet" class="lesson-section">
+  <div class="section-header">
+    <div class="section-number" style="background: linear-gradient(135deg, #ffd166, #ff8c42); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">★</div>
+    <div class="section-header-content">
+      <h2>BONUS - דף עזר מהיר (Cheat Sheet)</h2>
+      <p class="subtitle">כל הפקודות והקיצורים החשובים במקום אחד. שמור והדפס.</p>
+    </div>
+    <div class="section-duration">Reference</div>
+  </div>
+
+  <div class="content-block">
+    <h3>📋 קיצורי דרך לכלים</h3>
+    <div class="code-block">
+<pre><code><span class="token-comment"># כל הקיצורים נכתבים ב-Run (Win+R) או ב-PowerShell</span>
+
+dsa.msc                          <span class="token-comment"># ADUC - משתמשים ומחשבים</span>
+dsac.exe                         <span class="token-comment"># Administrative Center</span>
+dssite.msc                       <span class="token-comment"># Sites and Services</span>
+domain.msc                       <span class="token-comment"># Domains and Trusts</span>
+gpmc.msc                         <span class="token-comment"># Group Policy Management</span>
+mmc                              <span class="token-comment"># MMC ריק</span>
+servermanager.exe                <span class="token-comment"># Server Manager</span>
+eventvwr.msc                     <span class="token-comment"># Event Viewer</span>
+services.msc                     <span class="token-comment"># Services</span></code></pre>
+    </div>
+
+    <h3>👤 ניהול משתמשים</h3>
+    <div class="code-block">
+<pre><code><span class="token-comment"># יצירה</span>
+<span class="token-cmdlet">New-ADUser</span> <span class="token-param">-Name</span> <span class="token-string">"Name"</span> <span class="token-param">-SamAccountName</span> sam <span class="token-param">-AccountPassword</span> (<span class="token-cmdlet">Read-Host</span> <span class="token-param">-AsSecureString</span>) <span class="token-param">-Enabled</span> <span class="token-keyword">$true</span>
+
+<span class="token-comment"># שליפה</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Identity</span> user                    <span class="token-comment"># משתמש ספציפי</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Filter</span> <span class="token-operator">*</span>                          <span class="token-comment"># כל המשתמשים</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Filter</span> <span class="token-string">"Department -eq 'IT'"</span>     <span class="token-comment"># לפי שדה</span>
+
+<span class="token-comment"># שינוי</span>
+<span class="token-cmdlet">Set-ADUser</span> <span class="token-param">-Identity</span> user <span class="token-param">-Department</span> <span class="token-string">"IT"</span>
+<span class="token-cmdlet">Set-ADAccountPassword</span> <span class="token-param">-Identity</span> user <span class="token-param">-Reset</span>
+<span class="token-cmdlet">Disable-ADAccount</span> <span class="token-param">-Identity</span> user
+<span class="token-cmdlet">Enable-ADAccount</span> <span class="token-param">-Identity</span> user
+<span class="token-cmdlet">Unlock-ADAccount</span> <span class="token-param">-Identity</span> user
+<span class="token-cmdlet">Move-ADObject</span> <span class="token-param">-Identity</span> <span class="token-keyword">$dn</span> <span class="token-param">-TargetPath</span> <span class="token-string">"OU=..."</span>
+
+<span class="token-comment"># מחיקה</span>
+<span class="token-cmdlet">Remove-ADUser</span> <span class="token-param">-Identity</span> user <span class="token-param">-Confirm:</span><span class="token-keyword">$false</span></code></pre>
+    </div>
+
+    <h3>👥 ניהול קבוצות</h3>
+    <div class="code-block">
+<pre><code><span class="token-cmdlet">New-ADGroup</span> <span class="token-param">-Name</span> Sales <span class="token-param">-GroupCategory</span> Security <span class="token-param">-GroupScope</span> Global
+<span class="token-cmdlet">Add-ADGroupMember</span> <span class="token-param">-Identity</span> Sales <span class="token-param">-Members</span> user1, user2
+<span class="token-cmdlet">Remove-ADGroupMember</span> <span class="token-param">-Identity</span> Sales <span class="token-param">-Members</span> user1
+<span class="token-cmdlet">Get-ADGroupMember</span> <span class="token-param">-Identity</span> Sales
+<span class="token-cmdlet">Get-ADPrincipalGroupMembership</span> <span class="token-param">-Identity</span> user1  <span class="token-comment"># הקבוצות של משתמש</span></code></pre>
+    </div>
+
+    <h3>📁 ניהול OUs</h3>
+    <div class="code-block">
+<pre><code><span class="token-cmdlet">New-ADOrganizationalUnit</span> <span class="token-param">-Name</span> Sales <span class="token-param">-Path</span> <span class="token-string">"DC=corp,DC=local"</span>
+<span class="token-cmdlet">Get-ADOrganizationalUnit</span> <span class="token-param">-Filter</span> <span class="token-operator">*</span>
+<span class="token-cmdlet">Remove-ADOrganizationalUnit</span> <span class="token-param">-Identity</span> <span class="token-keyword">$dn</span> <span class="token-param">-Recursive</span></code></pre>
+    </div>
+
+    <h3>🌐 ניהול מרחוק</h3>
+    <div class="code-block">
+<pre><code><span class="token-cmdlet">Enter-PSSession</span> <span class="token-param">-ComputerName</span> SRV1               <span class="token-comment"># סשן אינטראקטיבי</span>
+<span class="token-cmdlet">Invoke-Command</span> <span class="token-param">-ComputerName</span> SRV1 <span class="token-param">-ScriptBlock</span> { ... }
+<span class="token-cmdlet">New-PSSession</span> <span class="token-param">-ComputerName</span> SRV1                  <span class="token-comment"># סשן קבוע</span>
+<span class="token-cmdlet">Get-Service</span> <span class="token-param">-ComputerName</span> SRV1
+<span class="token-cmdlet">Restart-Computer</span> <span class="token-param">-ComputerName</span> SRV1</code></pre>
+    </div>
+
+    <h3>🔍 אבחון</h3>
+    <div class="code-block">
+<pre><code>klist                              <span class="token-comment"># הצג Kerberos tickets</span>
+klist purge                        <span class="token-comment"># מחק tickets</span>
+nltest /dsgetdc:domain             <span class="token-comment"># מצא DC</span>
+nltest /sc_query:domain            <span class="token-comment"># Secure channel</span>
+gpresult /r                        <span class="token-comment"># GPOs שהוחלו</span>
+gpupdate /force                    <span class="token-comment"># עדכן GPOs</span>
+dcdiag                             <span class="token-comment"># אבחון DC</span>
+repadmin /showrepl                 <span class="token-comment"># בדיקת replication</span>
+whoami /all                        <span class="token-comment"># מי אני + groups + privileges</span></code></pre>
+    </div>
+
+    <h3>🔐 אבטחה (לפן-טסטים)</h3>
+    <div class="code-block">
+<pre><code><span class="token-comment"># חיפוש Kerberoastable accounts (חשבונות שירות עם SPN)</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Filter</span> <span class="token-string">"ServicePrincipalName -ne '$null'"</span> <span class="token-param">-Properties</span> ServicePrincipalName
+
+<span class="token-comment"># חיפוש חשבונות בלי Pre-auth (AS-REP Roasting)</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Filter</span> <span class="token-string">"DoesNotRequirePreAuth -eq '$true'"</span>
+
+<span class="token-comment"># חיפוש משתמשים בקבוצות privileged</span>
+<span class="token-cmdlet">Get-ADGroupMember</span> <span class="token-param">-Identity</span> <span class="token-string">"Domain Admins"</span> <span class="token-param">-Recursive</span>
+<span class="token-cmdlet">Get-ADGroupMember</span> <span class="token-param">-Identity</span> <span class="token-string">"Enterprise Admins"</span> <span class="token-param">-Recursive</span>
+
+<span class="token-comment"># משתמשים שלא התחברו זמן רב</span>
+<span class="token-cmdlet">Search-ADAccount</span> <span class="token-param">-AccountInactive</span> <span class="token-param">-TimeSpan</span> 90.00:00:00
+
+<span class="token-comment"># משתמשים עם סיסמה שלעולם לא פגה</span>
+<span class="token-cmdlet">Get-ADUser</span> <span class="token-param">-Filter</span> <span class="token-string">"PasswordNeverExpires -eq '$true' -and Enabled -eq '$true'"</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<section class="footer">
+  <h3>🎓 סיימת את השיעור!</h3>
+  <p>השלמת 5 שעות לימוד מקיפות של AD DC Advanced Configuration.</p>
+  <p style="margin-top:1rem; font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan);">
+    מבוסס על חומר HackerU. עיבוד והרחבה: מדריך לימוד אישי.
+  </p>
+  <p style="margin-top:2rem; font-size:0.9rem;">
+    שתף, הדפס, או שמור למועדפים. הצעדים הבאים: לתרגל במעבדה, ללמוד GPO, ולעבור לאבטחת AD.
+  </p>
+</section>
+
+<!-- ========== FLOATING NAV ========== -->
+<nav class="floating-nav">
+  <a href="#toc">📚</a>
+  <a href="#hour1">01</a>
+  <a href="#hour2">02</a>
+  <a href="#hour3">03</a>
+  <a href="#hour4">04</a>
+  <a href="#hour5">05</a>
+  <a href="#cheatsheet">★</a>
+</nav>
+
+<script>
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Intersection observer for animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.content-block, .feature-card, .step').forEach(el => {
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>
